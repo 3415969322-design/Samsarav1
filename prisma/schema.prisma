@@ -1,0 +1,259 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum UserRole {
+  OWNER
+  VIEWER
+}
+
+enum SettingScope {
+  USER
+  SYSTEM
+}
+
+enum TagType {
+  GLOBAL
+  DIARY
+  NOTE
+  TODO
+  FILE
+}
+
+enum TodoStatus {
+  OPEN
+  IN_PROGRESS
+  DONE
+  ARCHIVED
+}
+
+enum Priority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
+
+enum StorageProvider {
+  LOCAL
+  R2
+  S3
+  SUPABASE
+}
+
+enum FileVisibility {
+  PRIVATE
+  PUBLIC
+}
+
+enum EntityType {
+  TODO
+  NOTE
+  DIARY
+  FILE
+}
+
+enum AIStatus {
+  COMPLETED
+  FAILED
+}
+
+enum AIModule {
+  DASHBOARD
+  TODOS
+  NOTES
+  DIARY
+  FILES
+  AI
+}
+
+enum AIIntent {
+  CHAT
+  SUMMARIZE_DIARY
+  PLAN_TODOS
+  ORGANIZE_FILES
+  STUDY_ASSISTANT
+  SEARCH_KNOWLEDGE
+}
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  displayName  String
+  passwordHash String
+  role         UserRole @default(OWNER)
+  avatarFileId String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  aiHistory AIHistory[]
+  diaries   Diary[]
+  files     FileAsset[]
+  notes     Note[]
+  settings  Setting[]
+  tags      Tag[]
+  todos     Todo[]
+}
+
+model Setting {
+  id        String       @id @default(cuid())
+  userId    String
+  key       String
+  valueJson Json
+  scope     SettingScope @default(USER)
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, key])
+  @@index([scope])
+}
+
+model Tag {
+  id        String   @id @default(cuid())
+  userId    String
+  name      String
+  color     String
+  type      TagType  @default(GLOBAL)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  entityLinks TagOnEntity[]
+  user        User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, name, type])
+  @@index([type])
+}
+
+model Todo {
+  id          String     @id @default(cuid())
+  userId      String
+  title       String
+  description String?
+  status      TodoStatus @default(OPEN)
+  priority    Priority   @default(MEDIUM)
+  dueAt       DateTime?
+  completedAt DateTime?
+  parentId    String?
+  project     String?
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  children Todo[] @relation("TodoHierarchy")
+  parent   Todo?  @relation("TodoHierarchy", fields: [parentId], references: [id], onDelete: SetNull)
+  user     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, status, priority])
+  @@index([dueAt])
+}
+
+model Note {
+  id              String   @id @default(cuid())
+  userId          String
+  title           String
+  contentMarkdown String
+  contentText     String
+  pinned          Boolean  @default(false)
+  archived        Boolean  @default(false)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, pinned, archived])
+}
+
+model Diary {
+  id              String   @id @default(cuid())
+  userId          String
+  title           String
+  contentMarkdown String
+  contentText     String
+  mood            String?
+  weather         String?
+  diaryDate       DateTime
+  favorite        Boolean  @default(false)
+  archived        Boolean  @default(false)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, diaryDate])
+  @@index([userId, diaryDate])
+  @@index([userId, favorite, archived])
+}
+
+model FileAsset {
+  id              String          @id @default(cuid())
+  userId          String
+  filename        String
+  originalName    String
+  mimeType        String
+  size            BigInt
+  checksum        String?
+  storageProvider StorageProvider @default(LOCAL)
+  storageKey      String
+  visibility      FileVisibility  @default(PRIVATE)
+  metadataJson    Json?
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+
+  entityLinks FileOnEntity[]
+  user        User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([storageProvider, storageKey])
+  @@index([userId, mimeType])
+}
+
+model AIHistory {
+  id                String      @id @default(cuid())
+  userId            String
+  module            AIModule
+  intent            AIIntent
+  inputJson         Json
+  outputJson        Json?
+  model             String?
+  status            AIStatus
+  relatedEntityType EntityType?
+  relatedEntityId   String?
+  createdAt         DateTime    @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, module, intent])
+  @@index([relatedEntityType, relatedEntityId])
+}
+
+model TagOnEntity {
+  id         String     @id @default(cuid())
+  tagId      String
+  entityType EntityType
+  entityId   String
+  createdAt  DateTime   @default(now())
+
+  tag Tag @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@unique([tagId, entityType, entityId])
+  @@index([entityType, entityId])
+}
+
+model FileOnEntity {
+  id           String     @id @default(cuid())
+  fileId       String
+  entityType   EntityType
+  entityId     String
+  relationType String     @default("attachment")
+  createdAt    DateTime   @default(now())
+
+  file FileAsset @relation(fields: [fileId], references: [id], onDelete: Cascade)
+
+  @@unique([fileId, entityType, entityId, relationType])
+  @@index([entityType, entityId])
+}
