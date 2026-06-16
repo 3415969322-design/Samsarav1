@@ -5,7 +5,11 @@ import { redirect } from "next/navigation";
 import { requireSession } from "@/lib/auth/server";
 import { prisma } from "@/lib/db/prisma";
 import { markdownToPlainText } from "@/lib/markdown/text";
-import { normalizeTagIds, replaceEntityTags } from "@/features/tags/utils";
+import {
+  deleteEntityTags,
+  normalizeTagIds,
+  replaceEntityTags,
+} from "@/features/tags/utils";
 
 export async function createDocumentAction(formData: FormData) {
   const session = await requireSession();
@@ -66,20 +70,17 @@ export async function deleteDocumentAction(formData: FormData) {
     return;
   }
 
-  await prisma.$transaction([
-    prisma.tagOnEntity.deleteMany({
-      where: {
-        entityId: id,
-        entityType: "NOTE",
-      },
-    }),
-    prisma.note.delete({
-      where: {
-        id,
-        userId: session.userId,
-      },
-    }),
-  ]);
+  await prisma.note.delete({
+    where: {
+      id,
+      userId: session.userId,
+    },
+  });
+  await deleteEntityTags({
+    entityId: id,
+    entityType: "NOTE",
+    userId: session.userId,
+  });
 
   revalidatePath("/documents");
   redirect("/documents");

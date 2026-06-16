@@ -26,6 +26,7 @@ const statusMessages: Record<string, TranslationKey> = {
   "password-current-invalid": "settings.statusPasswordCurrentInvalid",
   "password-invalid": "settings.statusPasswordInvalid",
   "password-saved": "settings.statusPasswordSaved",
+  "profile-email-exists": "settings.statusProfileEmailExists",
   "profile-invalid": "settings.statusProfileInvalid",
   "profile-saved": "settings.statusProfileSaved",
   "theme-saved": "settings.statusThemeSaved",

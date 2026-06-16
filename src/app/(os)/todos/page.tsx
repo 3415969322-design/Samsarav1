@@ -69,6 +69,7 @@ export default async function TodosPage({
   const todoTags = await getTagsForEntities(
     "TODO",
     todos.map((todo) => todo.id),
+    session.userId,
   );
 
   return (

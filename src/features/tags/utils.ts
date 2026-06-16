@@ -22,6 +22,7 @@ export function normalizeTagIds(formData: FormData) {
 export async function getTagsForEntities(
   entityType: EntityType,
   entityIds: string[],
+  userId: string,
 ) {
   if (entityIds.length === 0) {
     return new Map<string, EntityTag[]>();
@@ -32,6 +33,9 @@ export async function getTagsForEntities(
     where: {
       entityId: { in: entityIds },
       entityType,
+      tag: {
+        userId,
+      },
     },
     select: {
       entityId: true,
@@ -77,6 +81,9 @@ export async function replaceEntityTags({
     where: {
       entityId,
       entityType,
+      tag: {
+        userId,
+      },
     },
   });
 
@@ -91,5 +98,25 @@ export async function replaceEntityTags({
       tagId: tag.id,
     })),
     skipDuplicates: true,
+  });
+}
+
+export async function deleteEntityTags({
+  entityId,
+  entityType,
+  userId,
+}: {
+  entityId: string;
+  entityType: EntityType;
+  userId: string;
+}) {
+  await prisma.tagOnEntity.deleteMany({
+    where: {
+      entityId,
+      entityType,
+      tag: {
+        userId,
+      },
+    },
   });
 }

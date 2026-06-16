@@ -178,8 +178,8 @@ export default async function DiaryPage({
     diaries.find((diary) => diary.id === params?.id) ?? diaries[0] ?? null;
   const diaryIds = diaries.map((diary) => diary.id);
   const [diaryTags, diaryFiles] = await Promise.all([
-    getTagsForEntities("DIARY", diaryIds),
-    getFilesForEntities("DIARY", diaryIds),
+    getTagsForEntities("DIARY", diaryIds, session.userId),
+    getFilesForEntities("DIARY", diaryIds, session.userId),
   ]);
   const selectedTagIds = selectedDiary
     ? (diaryTags.get(selectedDiary.id) ?? []).map((tag) => tag.id)

@@ -5,9 +5,11 @@ const globalForPrisma = globalThis as unknown as {
   prisma?: PrismaClient;
 };
 
-const connectionString =
-  process.env.DATABASE_URL ??
-  "postgresql://samsara:samsara_password@localhost:5432/samsara?schema=public";
+const connectionString = process.env.DATABASE_URL;
+
+if (!connectionString) {
+  throw new Error("DATABASE_URL is required.");
+}
 
 const adapter = new PrismaPg({ connectionString });
 

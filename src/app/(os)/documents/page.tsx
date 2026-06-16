@@ -47,6 +47,7 @@ export default async function DocumentsPage({
   const documentTags = await getTagsForEntities(
     "NOTE",
     documents.map((document) => document.id),
+    session.userId,
   );
   const selectedTagIds = selectedDocument
     ? (documentTags.get(selectedDocument.id) ?? []).map((tag) => tag.id)

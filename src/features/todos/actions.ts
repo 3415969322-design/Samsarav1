@@ -5,7 +5,11 @@ import { redirect } from "next/navigation";
 import type { Priority, TodoStatus } from "@/generated/prisma/enums";
 import { requireSession } from "@/lib/auth/server";
 import { prisma } from "@/lib/db/prisma";
-import { normalizeTagIds, replaceEntityTags } from "@/features/tags/utils";
+import {
+  deleteEntityTags,
+  normalizeTagIds,
+  replaceEntityTags,
+} from "@/features/tags/utils";
 
 const priorities: Priority[] = ["LOW", "MEDIUM", "HIGH"];
 
@@ -117,20 +121,17 @@ export async function deleteTodoAction(formData: FormData) {
     return;
   }
 
-  await prisma.$transaction([
-    prisma.tagOnEntity.deleteMany({
-      where: {
-        entityId: id,
-        entityType: "TODO",
-      },
-    }),
-    prisma.todo.delete({
-      where: {
-        id,
-        userId: session.userId,
-      },
-    }),
-  ]);
+  await prisma.todo.delete({
+    where: {
+      id,
+      userId: session.userId,
+    },
+  });
+  await deleteEntityTags({
+    entityId: id,
+    entityType: "TODO",
+    userId: session.userId,
+  });
 
   revalidatePath(getTodoPath(formData));
 }

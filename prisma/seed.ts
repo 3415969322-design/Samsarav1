@@ -3,9 +3,11 @@ import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient } from "../src/generated/prisma/client";
 import { hashPassword } from "../src/lib/auth/password";
 
-const connectionString =
-  process.env.DATABASE_URL ??
-  "postgresql://samsara:samsara_password@localhost:5432/samsara?schema=public";
+const connectionString = process.env.DATABASE_URL;
+
+if (!connectionString) {
+  throw new Error("DATABASE_URL is required to seed Samsara.");
+}
 
 const prisma = new PrismaClient({
   adapter: new PrismaPg({ connectionString }),

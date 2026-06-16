@@ -2,8 +2,16 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { normalizeFileIds, replaceEntityFiles } from "@/features/files/utils";
-import { normalizeTagIds, replaceEntityTags } from "@/features/tags/utils";
+import {
+  deleteEntityFiles,
+  normalizeFileIds,
+  replaceEntityFiles,
+} from "@/features/files/utils";
+import {
+  deleteEntityTags,
+  normalizeTagIds,
+  replaceEntityTags,
+} from "@/features/tags/utils";
 import { requireSession } from "@/lib/auth/server";
 import { prisma } from "@/lib/db/prisma";
 import { markdownToPlainText } from "@/lib/markdown/text";
@@ -120,24 +128,22 @@ export async function deleteDiaryAction(formData: FormData) {
     return;
   }
 
-  await prisma.$transaction([
-    prisma.tagOnEntity.deleteMany({
-      where: {
-        entityId: id,
-        entityType: "DIARY",
-      },
+  await prisma.diary.delete({
+    where: {
+      id,
+      userId: session.userId,
+    },
+  });
+  await Promise.all([
+    deleteEntityTags({
+      entityId: id,
+      entityType: "DIARY",
+      userId: session.userId,
     }),
-    prisma.fileOnEntity.deleteMany({
-      where: {
-        entityId: id,
-        entityType: "DIARY",
-      },
-    }),
-    prisma.diary.delete({
-      where: {
-        id,
-        userId: session.userId,
-      },
+    deleteEntityFiles({
+      entityId: id,
+      entityType: "DIARY",
+      userId: session.userId,
     }),
   ]);
 

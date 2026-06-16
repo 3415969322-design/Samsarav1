@@ -1,6 +1,8 @@
+import Link from "next/link";
 import { redirect } from "next/navigation";
 import { LanguageToggle } from "@/components/i18n/language-toggle";
 import { T } from "@/components/i18n/text";
+import { TranslatedInput } from "@/components/i18n/translated-controls";
 import { loginAction } from "@/features/auth/actions";
 import { getSessionFromCookies } from "@/lib/auth/server";
 import { Button } from "@/components/ui/button";
@@ -8,7 +10,7 @@ import { Button } from "@/components/ui/button";
 export default async function LoginPage({
   searchParams,
 }: {
-  searchParams?: Promise<{ error?: string }>;
+  searchParams?: Promise<{ error?: string; next?: string }>;
 }) {
   const session = await getSessionFromCookies();
 
@@ -36,6 +38,19 @@ export default async function LoginPage({
           <T k="login.description" />
         </p>
         <form action={loginAction} className="mt-6 space-y-4">
+          <input name="next" type="hidden" value={params?.next ?? "/dashboard"} />
+          <label className="block text-sm font-medium" htmlFor="email">
+            <T k="login.email" />
+          </label>
+          <TranslatedInput
+            autoComplete="email"
+            className="h-11 w-full rounded-md border border-line bg-background px-3 text-sm outline-none ring-accent/20 transition focus:ring-4"
+            id="email"
+            name="email"
+            placeholderKey="login.email"
+            required
+            type="email"
+          />
           <label className="block text-sm font-medium" htmlFor="password">
             <T k="login.password" />
           </label>
@@ -61,6 +76,12 @@ export default async function LoginPage({
             <T k="login.submit" />
           </Button>
         </form>
+        <Link
+          className="mt-4 block text-center text-sm text-muted underline hover:text-foreground"
+          href="/register"
+        >
+          <T k="login.registerLink" />
+        </Link>
       </section>
     </main>
   );

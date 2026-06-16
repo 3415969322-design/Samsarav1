@@ -3,7 +3,8 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { hashPassword, verifyPassword } from "@/lib/auth/password";
-import { requireSession } from "@/lib/auth/server";
+import { requireSession, setSessionCookie } from "@/lib/auth/server";
+import { createSessionToken } from "@/lib/auth/session";
 import { prisma } from "@/lib/db/prisma";
 
 function settingRedirect(status: string) {
@@ -19,15 +20,44 @@ export async function updateProfileAction(formData: FormData) {
     settingRedirect("profile-invalid");
   }
 
-  await prisma.user.update({
+  const existingUser = await prisma.user.findFirst({
+    select: { id: true },
+    where: {
+      email: {
+        equals: email,
+        mode: "insensitive",
+      },
+      id: { not: session.userId },
+    },
+  });
+
+  if (existingUser) {
+    settingRedirect("profile-email-exists");
+  }
+
+  const user = await prisma.user.update({
     data: {
       displayName,
       email,
+    },
+    select: {
+      displayName: true,
+      email: true,
+      id: true,
+      role: true,
     },
     where: {
       id: session.userId,
     },
   });
+  const token = await createSessionToken({
+    displayName: user.displayName,
+    email: user.email,
+    role: user.role,
+    userId: user.id,
+  });
+
+  await setSessionCookie(token);
 
   revalidatePath("/settings");
   settingRedirect("profile-saved");

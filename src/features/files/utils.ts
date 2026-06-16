@@ -24,6 +24,7 @@ export function normalizeFileIds(formData: FormData) {
 export async function getFilesForEntities(
   entityType: EntityType,
   entityIds: string[],
+  userId: string,
 ) {
   if (entityIds.length === 0) {
     return new Map<string, EntityFile[]>();
@@ -34,6 +35,9 @@ export async function getFilesForEntities(
     where: {
       entityId: { in: entityIds },
       entityType,
+      file: {
+        userId,
+      },
     },
     select: {
       entityId: true,
@@ -81,6 +85,9 @@ export async function replaceEntityFiles({
     where: {
       entityId,
       entityType,
+      file: {
+        userId,
+      },
     },
   });
 
@@ -95,5 +102,42 @@ export async function replaceEntityFiles({
       fileId: file.id,
     })),
     skipDuplicates: true,
+  });
+}
+
+export async function deleteEntityFiles({
+  entityId,
+  entityType,
+  userId,
+}: {
+  entityId: string;
+  entityType: EntityType;
+  userId: string;
+}) {
+  await prisma.fileOnEntity.deleteMany({
+    where: {
+      entityId,
+      entityType,
+      file: {
+        userId,
+      },
+    },
+  });
+}
+
+export async function deleteFileAttachmentLinks({
+  fileId,
+  userId,
+}: {
+  fileId: string;
+  userId: string;
+}) {
+  await prisma.fileOnEntity.deleteMany({
+    where: {
+      fileId,
+      file: {
+        userId,
+      },
+    },
   });
 }

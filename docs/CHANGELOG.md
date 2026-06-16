@@ -1,5 +1,14 @@
 # Changelog
 
+## 2026-06-17 - v1.1 Multi-user Accounts
+
+- Added invite-code registration at `/register` with email, display name, password, confirmation, and `INVITE_CODE` validation.
+- Changed login to email + password authentication while keeping httpOnly session cookies.
+- Added authenticated redirects for `/login` and `/register`.
+- Tightened tag and file association helpers so relation reads/replacements/deletes are scoped through the current user's Tag/File records.
+- Removed application fallback to a localhost PostgreSQL URL; `DATABASE_URL` is now required at runtime and for seeding.
+- Updated README environment guidance for the deployed Supabase/Vercel setup.
+
 ## 2026-06-15 - Bilingual UI
 
 - Added a lightweight English/Chinese language provider with local browser persistence.

@@ -1,11 +1,12 @@
 # Samsara
 
-Samsara is a long-term Personal OS and second brain built for one owner. It is a private dashboard for daily planning, writing, files, journal records, search, settings, and AI workflows.
+Samsara is a long-term Personal OS and second brain with private multi-user accounts. It is a dashboard for daily planning, writing, files, journal records, search, settings, and AI workflows, with each user's workspace isolated by `userId`.
 
 ## v1.0 Features
 
 - Public profile and product introduction
-- Password-protected private workspace
+- Email/password accounts with invite-code registration
+- Password-protected private workspaces
 - Dashboard-first OS layout
 - Todo CRUD with priority, due date, tags, filters, sorting, and search
 - Markdown Documents with auto-save, preview, tags, pinning, archive, and search
@@ -41,11 +42,12 @@ Configure environment:
 cp .env.example .env
 ```
 
-Start PostgreSQL using the connection in `.env`, then run:
+Set `DATABASE_URL` to the Supabase PostgreSQL connection string. Do not commit `.env`.
+
+Initialize or update the database only after confirming the target database:
 
 ```bash
-pnpm db:up
-pnpm db:migrate
+pnpm db:generate
 pnpm db:seed
 pnpm dev
 ```
@@ -56,11 +58,14 @@ Open:
 http://localhost:3000
 ```
 
-Default local password from `.env.example`:
+Required private environment variables:
 
-```text
-change-this-local-password
-```
+- `DATABASE_URL`
+- `SESSION_SECRET`
+- `INVITE_CODE`
+- `SEED_USER_EMAIL`
+- `SEED_USER_NAME`
+- `SEED_USER_PASSWORD`
 
 ## Release Checks
 
@@ -75,7 +80,7 @@ pnpm release:check
 ## Important Notes
 
 - A running PostgreSQL database is required for login and all private modules.
-- `pnpm db:up` uses Docker Compose. If Docker is not installed, start PostgreSQL manually with the same credentials from `.env`.
+- Production uses Supabase PostgreSQL on Vercel. Do not run destructive Prisma commands such as `prisma migrate reset` against production.
 - `storage/local` is ignored by Git and used by the local storage provider.
 - AI defaults to `AI_PROVIDER="local"`, which returns deterministic local Markdown responses. Set `AI_PROVIDER="openai-compatible"` and configure `AI_API_KEY` for external model calls.
 

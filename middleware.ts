@@ -22,7 +22,7 @@ export async function middleware(request: NextRequest) {
     pathname.startsWith(prefix),
   );
 
-  if (pathname === "/login" && session) {
+  if ((pathname === "/login" || pathname === "/register") && session) {
     return NextResponse.redirect(new URL("/dashboard", request.url));
   }
 
@@ -39,6 +39,7 @@ export async function middleware(request: NextRequest) {
 export const config = {
   matcher: [
     "/login",
+    "/register",
     "/dashboard/:path*",
     "/todos/:path*",
     "/documents/:path*",

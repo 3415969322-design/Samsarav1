@@ -7,7 +7,12 @@ import { requireSession } from "@/lib/auth/server";
 import { prisma } from "@/lib/db/prisma";
 import { storageProvider } from "@/lib/storage";
 import { isSupportedFile } from "@/features/files/types";
-import { normalizeTagIds, replaceEntityTags } from "@/features/tags/utils";
+import { deleteFileAttachmentLinks } from "@/features/files/utils";
+import {
+  deleteEntityTags,
+  normalizeTagIds,
+  replaceEntityTags,
+} from "@/features/tags/utils";
 
 function getStorageProviderEnum() {
   switch (storageProvider.name) {
@@ -140,23 +145,21 @@ export async function deleteFileAction(formData: FormData) {
   }
 
   await storageProvider.delete(file.storageKey);
-  await prisma.$transaction([
-    prisma.tagOnEntity.deleteMany({
-      where: {
-        entityId: id,
-        entityType: "FILE",
-      },
+  await prisma.fileAsset.delete({
+    where: {
+      id,
+      userId: session.userId,
+    },
+  });
+  await Promise.all([
+    deleteEntityTags({
+      entityId: id,
+      entityType: "FILE",
+      userId: session.userId,
     }),
-    prisma.fileOnEntity.deleteMany({
-      where: {
-        fileId: id,
-      },
-    }),
-    prisma.fileAsset.delete({
-      where: {
-        id,
-        userId: session.userId,
-      },
+    deleteFileAttachmentLinks({
+      fileId: id,
+      userId: session.userId,
     }),
   ]);
 

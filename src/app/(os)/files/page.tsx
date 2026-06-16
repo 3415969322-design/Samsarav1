@@ -68,6 +68,7 @@ export default async function FilesPage({
   const fileTags = await getTagsForEntities(
     "FILE",
     files.map((file) => file.id),
+    session.userId,
   );
 
   return (
