@@ -5,7 +5,7 @@ import {
   useContext,
   useEffect,
   useMemo,
-  useState,
+  useSyncExternalStore,
   type ReactNode,
 } from "react";
 import {
@@ -15,6 +15,7 @@ import {
 } from "@/lib/i18n/dictionary";
 
 const storageKey = "samsara-language";
+const languageChangeEvent = "samsara-language-change";
 
 type LanguageContextValue = {
   language: Language;
@@ -25,11 +26,7 @@ type LanguageContextValue = {
 
 const LanguageContext = createContext<LanguageContextValue | null>(null);
 
-function getInitialLanguage(): Language {
-  if (typeof window === "undefined") {
-    return "en";
-  }
-
+function getStoredLanguage(): Language {
   const stored = window.localStorage.getItem(storageKey);
 
   if (stored === "en" || stored === "zh") {
@@ -39,12 +36,30 @@ function getInitialLanguage(): Language {
   return window.navigator.language.toLowerCase().startsWith("zh") ? "zh" : "en";
 }
 
+function getServerLanguage(): Language {
+  return "en";
+}
+
+function subscribeToLanguageChanges(callback: () => void) {
+  window.addEventListener("storage", callback);
+  window.addEventListener(languageChangeEvent, callback);
+
+  return () => {
+    window.removeEventListener("storage", callback);
+    window.removeEventListener(languageChangeEvent, callback);
+  };
+}
+
 export function LanguageProvider({ children }: { children: ReactNode }) {
-  const [language, setLanguageState] = useState<Language>(getInitialLanguage);
+  const language = useSyncExternalStore(
+    subscribeToLanguageChanges,
+    getStoredLanguage,
+    getServerLanguage,
+  );
 
   const setLanguage = (nextLanguage: Language) => {
-    setLanguageState(nextLanguage);
     window.localStorage.setItem(storageKey, nextLanguage);
+    window.dispatchEvent(new Event(languageChangeEvent));
   };
 
   useEffect(() => {

@@ -12,11 +12,12 @@ export function AppShell({
   session: SessionPayload;
 }) {
   return (
-    <div className="flex min-h-screen overflow-x-hidden bg-background">
+    <div className="samsara-app-shell flex min-h-screen overflow-x-hidden bg-background/90">
+      <div aria-hidden="true" className="samsara-background" />
       <Sidebar />
-      <div className="flex min-w-0 flex-1 flex-col">
+      <div className="relative z-10 flex min-w-0 flex-1 flex-col">
         <TopBar session={session} />
-        <main className="mx-auto w-full max-w-7xl flex-1 px-4 pb-28 pt-4 sm:p-6 sm:pb-28 lg:p-8">
+        <main className="samsara-page-enter mx-auto w-full max-w-7xl flex-1 px-4 pb-28 pt-4 sm:p-6 sm:pb-28 lg:p-8">
           {children}
         </main>
       </div>

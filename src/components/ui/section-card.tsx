@@ -14,8 +14,8 @@ export function SectionCard({
   return (
     <section
       className={cn(
-        "rounded-xl border border-line bg-panel p-4 shadow-sm transition-all duration-200 sm:p-5",
-        interactive && "hover:-translate-y-1 hover:shadow-md",
+        "rounded-xl border border-line bg-panel/95 p-4 shadow-sm transition-all duration-200 ease-in-out sm:p-5",
+        interactive && "hover:-translate-y-1 hover:shadow-md active:translate-y-0 active:shadow-none",
         className,
       )}
     >

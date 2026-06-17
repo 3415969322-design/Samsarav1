@@ -11,7 +11,7 @@ export function Sidebar() {
   const { t } = useLanguage();
 
   return (
-    <aside className="hidden w-72 shrink-0 border-r border-line bg-panel lg:block">
+    <aside className="relative z-10 hidden w-72 shrink-0 border-r border-line bg-panel lg:block">
       <div className="flex h-16 items-center border-b border-line px-6">
         <div>
           <p className="text-lg font-semibold">Samsara</p>

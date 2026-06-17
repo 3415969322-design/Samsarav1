@@ -60,3 +60,150 @@ textarea,
 button {
   font: inherit;
 }
+
+.samsara-app-shell {
+  isolation: isolate;
+  position: relative;
+}
+
+.samsara-background {
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  position: fixed;
+  z-index: 0;
+}
+
+.samsara-background::before,
+.samsara-background::after {
+  content: "";
+  filter: blur(48px);
+  opacity: 0.16;
+  position: absolute;
+  transform: translate3d(0, 0, 0);
+  will-change: transform;
+}
+
+.samsara-background::before {
+  animation: samsara-gradient-drift 28s ease-in-out infinite alternate;
+  background:
+    radial-gradient(circle at 20% 20%, rgb(37 99 235 / 22%), transparent 32%),
+    radial-gradient(circle at 80% 10%, rgb(14 165 233 / 18%), transparent 30%),
+    radial-gradient(circle at 54% 88%, rgb(168 85 247 / 14%), transparent 34%);
+  height: 70vh;
+  left: -18vw;
+  top: -20vh;
+  width: 92vw;
+}
+
+.samsara-background::after {
+  animation: samsara-float 34s ease-in-out infinite alternate;
+  background:
+    radial-gradient(circle at 28% 24%, rgb(251 191 36 / 16%), transparent 34%),
+    radial-gradient(circle at 78% 76%, rgb(37 99 235 / 14%), transparent 36%);
+  bottom: -24vh;
+  height: 64vh;
+  right: -18vw;
+  width: 78vw;
+}
+
+[data-theme="dark"] .samsara-background::before {
+  opacity: 0.18;
+  background:
+    radial-gradient(circle at 18% 20%, rgb(96 165 250 / 20%), transparent 32%),
+    radial-gradient(circle at 82% 18%, rgb(168 85 247 / 14%), transparent 30%),
+    radial-gradient(circle at 50% 88%, rgb(14 165 233 / 10%), transparent 34%);
+}
+
+[data-theme="dark"] .samsara-background::after {
+  opacity: 0.12;
+  background:
+    radial-gradient(circle at 20% 28%, rgb(244 241 234 / 8%), transparent 30%),
+    radial-gradient(circle at 80% 72%, rgb(96 165 250 / 16%), transparent 34%);
+}
+
+.samsara-page-enter {
+  animation: samsara-page-enter 240ms ease-in-out both;
+}
+
+.samsara-skeleton {
+  background:
+    linear-gradient(90deg, transparent, rgb(255 255 255 / 26%), transparent),
+    var(--line);
+  background-size: 220% 100%, 100% 100%;
+  animation: samsara-shimmer 1.4s ease-in-out infinite;
+}
+
+[data-theme="dark"] .samsara-skeleton {
+  background:
+    linear-gradient(90deg, transparent, rgb(255 255 255 / 8%), transparent),
+    var(--line);
+  background-size: 220% 100%, 100% 100%;
+}
+
+@keyframes samsara-page-enter {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes samsara-gradient-drift {
+  from {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+
+  to {
+    transform: translate3d(8vw, 5vh, 0) scale(1.08);
+  }
+}
+
+@keyframes samsara-float {
+  from {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+
+  to {
+    transform: translate3d(-7vw, -6vh, 0) scale(1.06);
+  }
+}
+
+@keyframes samsara-shimmer {
+  from {
+    background-position: 180% 0, 0 0;
+  }
+
+  to {
+    background-position: -80% 0, 0 0;
+  }
+}
+
+@media (max-width: 767px) {
+  .samsara-background::before {
+    filter: blur(40px);
+    opacity: 0.1;
+  }
+
+  .samsara-background::after {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .samsara-background::before,
+  .samsara-background::after,
+  .samsara-page-enter,
+  .samsara-skeleton {
+    animation: none;
+  }
+
+  .samsara-page-enter {
+    opacity: 1;
+    transform: none;
+  }
+}
