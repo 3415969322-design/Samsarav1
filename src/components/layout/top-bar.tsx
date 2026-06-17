@@ -13,9 +13,9 @@ export function TopBar({ session }: { session: SessionPayload }) {
   const { t } = useLanguage();
 
   return (
-    <header className="sticky top-0 z-40 flex min-h-16 flex-wrap items-center justify-between gap-3 border-b border-line bg-panel/95 px-4 py-3 backdrop-blur sm:flex-nowrap sm:px-6 sm:py-0">
+    <header className="flex h-16 items-center justify-between border-b border-line bg-panel px-4 sm:px-6">
       <button
-        className="order-2 flex h-11 min-w-0 flex-[1_0_100%] items-center gap-2 rounded-md border border-line bg-background px-3 text-left text-sm text-muted transition-colors hover:text-foreground sm:order-none sm:h-10 sm:max-w-md sm:flex-1"
+        className="flex min-w-0 flex-1 items-center gap-2 rounded-md border border-line bg-background px-3 py-2 text-left text-sm text-muted transition-colors hover:text-foreground sm:max-w-md"
         onClick={() => window.dispatchEvent(new Event("samsara:open-command-palette"))}
         type="button"
       >
@@ -26,27 +26,23 @@ export function TopBar({ session }: { session: SessionPayload }) {
         </span>
       </button>
 
-      <div className="order-1 ml-auto flex items-center gap-2 sm:order-none sm:ml-3">
+      <div className="ml-3 flex items-center gap-2">
         <Button
           aria-label={t("theme.toggle")}
-          className="h-11 w-11 px-0 sm:h-10 sm:w-10"
+          className="h-10 w-10 px-0"
           onClick={toggleTheme}
           type="button"
           variant="secondary"
         >
           {theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
         </Button>
-        <LanguageToggle className="h-11 px-3 sm:h-10" />
+        <LanguageToggle className="h-10 px-3" />
         <div className="hidden text-right sm:block">
           <p className="text-sm font-medium">{session.displayName}</p>
           <p className="text-xs text-muted">{session.email}</p>
         </div>
         <form action={logoutAction}>
-          <Button
-            aria-label={t("topbar.logout")}
-            className="h-11 w-11 px-0 sm:h-10 sm:w-10"
-            type="submit"
-          >
+          <Button aria-label={t("topbar.logout")} className="h-10 w-10 px-0" type="submit">
             <LogOut className="h-4 w-4" />
           </Button>
         </form>
