@@ -49,7 +49,7 @@ export function TodoList({
 }) {
   if (todos.length === 0) {
     return (
-      <section className="rounded-lg border border-line bg-panel p-6 text-sm text-muted">
+      <section className="rounded-xl border border-line bg-panel p-6 text-sm text-muted shadow-sm">
         <T k="todo.empty" />
       </section>
     );
@@ -62,7 +62,7 @@ export function TodoList({
 
         return (
           <article
-            className="rounded-lg border border-line bg-panel p-4"
+            className="rounded-xl border border-line bg-panel p-4 shadow-sm transition-colors hover:border-accent/30 sm:p-5"
             key={todo.id}
           >
             <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
@@ -74,7 +74,7 @@ export function TodoList({
                     <button
                       aria-label="Toggle todo completion"
                       className={cn(
-                        "h-5 w-5 rounded border border-line",
+                        "h-6 w-6 rounded-md border border-line transition-colors hover:border-accent",
                         todo.status === "DONE" && "bg-accent",
                       )}
                       type="submit"
@@ -109,34 +109,34 @@ export function TodoList({
                 ) : null}
               </div>
 
-              <form action={deleteTodoAction}>
+              <form action={deleteTodoAction} className="sm:shrink-0">
                 <input name="id" type="hidden" value={todo.id} />
-                <Button type="submit" variant="ghost">
+                <Button className="w-full sm:w-auto" type="submit" variant="ghost">
                   <T k="common.delete" />
                 </Button>
               </form>
             </div>
 
             <details className="mt-4">
-              <summary className="cursor-pointer text-sm font-medium text-muted">
+              <summary className="min-h-11 cursor-pointer rounded-lg px-1 py-3 text-sm font-medium text-muted hover:text-foreground">
                 <T k="common.edit" />
               </summary>
               <form action={updateTodoAction} className="mt-4 grid gap-3">
                 <input name="id" type="hidden" value={todo.id} />
                 <input
-                  className="h-10 rounded-md border border-line bg-background px-3 text-sm outline-none ring-accent/20 focus:ring-4"
+                  className="min-h-11 rounded-lg border border-line bg-background px-3 text-base outline-none ring-accent/20 focus:ring-4 sm:text-sm"
                   name="title"
                   required
                   defaultValue={todo.title}
                 />
                 <textarea
-                  className="min-h-20 rounded-md border border-line bg-background px-3 py-2 text-sm outline-none ring-accent/20 focus:ring-4"
+                  className="min-h-24 rounded-lg border border-line bg-background px-3 py-2 text-base outline-none ring-accent/20 focus:ring-4 sm:text-sm"
                   name="description"
                   defaultValue={todo.description ?? ""}
                 />
                 <div className="grid gap-3 sm:grid-cols-2">
                   <TranslatedSelect
-                    className="h-10 rounded-md border border-line bg-background px-3 text-sm"
+                    className="min-h-11 rounded-lg border border-line bg-background px-3 text-base sm:text-sm"
                     defaultValue={todo.priority}
                     name="priority"
                     options={[
@@ -146,7 +146,7 @@ export function TodoList({
                     ]}
                   />
                   <input
-                    className="h-10 rounded-md border border-line bg-background px-3 text-sm"
+                    className="min-h-11 rounded-lg border border-line bg-background px-3 text-base sm:text-sm"
                     defaultValue={formatDate(todo.dueAt)}
                     name="dueAt"
                     type="date"
@@ -157,7 +157,7 @@ export function TodoList({
                   tags={tagOptions}
                 />
                 <div>
-                  <Button type="submit" variant="primary">
+                  <Button className="w-full sm:w-auto" type="submit" variant="primary">
                     <T k="todo.save" />
                   </Button>
                 </div>

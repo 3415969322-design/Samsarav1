@@ -12,6 +12,9 @@ import {
   TranslatedTextarea,
 } from "@/components/i18n/translated-controls";
 import { Button } from "@/components/ui/button";
+import { EmptyState } from "@/components/ui/empty-state";
+import { PageHeader } from "@/components/ui/page-header";
+import { SectionCard } from "@/components/ui/section-card";
 
 type TodoFilter = "all" | "open" | "done";
 type TodoSort = "updated" | "due" | "priority";
@@ -73,42 +76,34 @@ export default async function TodosPage({
   );
 
   return (
-    <div className="space-y-6">
-      <section className="rounded-lg border border-line bg-panel p-6">
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-          <div>
-            <p className="text-sm font-medium uppercase tracking-wide text-muted">
-              v1.0
-            </p>
-            <h1 className="mt-2 text-3xl font-semibold">
-              <T k="todo.title" />
-            </h1>
-            <p className="mt-2 max-w-2xl text-sm leading-6 text-muted">
-              <T k="todo.description" />
-            </p>
-          </div>
-          <Link className="text-sm text-muted underline" href="/tags">
+    <div className="space-y-5 sm:space-y-6">
+      <PageHeader
+        actions={
+          <Link className="inline-flex min-h-11 items-center rounded-lg border border-line px-3 text-sm text-muted transition-colors hover:bg-background hover:text-foreground" href="/tags">
             <T k="common.manageTags" />
           </Link>
-        </div>
-      </section>
+        }
+        descriptionKey="todo.description"
+        eyebrow="v1.0"
+        titleKey="todo.title"
+      />
 
-      <section className="rounded-lg border border-line bg-panel p-4">
+      <SectionCard>
         <form action={createTodoAction} className="grid gap-3">
           <TranslatedInput
-            className="h-11 rounded-md border border-line bg-background px-3 text-sm outline-none ring-accent/20 focus:ring-4"
+            className="min-h-11 rounded-lg border border-line bg-background px-3 text-base outline-none ring-accent/20 focus:ring-4 sm:text-sm"
             name="title"
             placeholderKey="todo.new"
             required
           />
           <TranslatedTextarea
-            className="min-h-20 rounded-md border border-line bg-background px-3 py-2 text-sm outline-none ring-accent/20 focus:ring-4"
+            className="min-h-24 rounded-lg border border-line bg-background px-3 py-2 text-base outline-none ring-accent/20 focus:ring-4 sm:text-sm"
             name="description"
             placeholderKey="todo.descriptionPlaceholder"
           />
           <div className="grid gap-3 sm:grid-cols-2">
             <TranslatedSelect
-              className="h-10 rounded-md border border-line bg-background px-3 text-sm"
+              className="min-h-11 rounded-lg border border-line bg-background px-3 text-base sm:text-sm"
               defaultValue="MEDIUM"
               name="priority"
               options={[
@@ -118,7 +113,7 @@ export default async function TodosPage({
               ]}
             />
             <input
-              className="h-10 rounded-md border border-line bg-background px-3 text-sm"
+              className="min-h-11 rounded-lg border border-line bg-background px-3 text-base sm:text-sm"
               name="dueAt"
               type="date"
             />
@@ -130,18 +125,18 @@ export default async function TodosPage({
             </Button>
           </div>
         </form>
-      </section>
+      </SectionCard>
 
-      <section className="rounded-lg border border-line bg-panel p-4">
+      <SectionCard>
         <form className="grid gap-3 md:grid-cols-[1fr_10rem_10rem_auto]">
           <TranslatedInput
-            className="h-10 rounded-md border border-line bg-background px-3 text-sm"
+            className="min-h-11 rounded-lg border border-line bg-background px-3 text-base sm:text-sm"
             defaultValue={q}
             name="q"
             placeholderKey="todo.search"
           />
           <TranslatedSelect
-            className="h-10 rounded-md border border-line bg-background px-3 text-sm"
+            className="min-h-11 rounded-lg border border-line bg-background px-3 text-base sm:text-sm"
             defaultValue={filter}
             name="filter"
             options={[
@@ -151,7 +146,7 @@ export default async function TodosPage({
             ]}
           />
           <TranslatedSelect
-            className="h-10 rounded-md border border-line bg-background px-3 text-sm"
+            className="min-h-11 rounded-lg border border-line bg-background px-3 text-base sm:text-sm"
             defaultValue={sort}
             name="sort"
             options={[
@@ -164,9 +159,13 @@ export default async function TodosPage({
             <T k="common.apply" />
           </Button>
         </form>
-      </section>
+      </SectionCard>
 
-      <TodoList tagOptions={tagOptions} todoTags={todoTags} todos={todos} />
+      {todos.length === 0 ? (
+        <EmptyState textKey="todo.empty" />
+      ) : (
+        <TodoList tagOptions={tagOptions} todoTags={todoTags} todos={todos} />
+      )}
     </div>
   );
 }

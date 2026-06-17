@@ -8,6 +8,9 @@ import { prisma } from "@/lib/db/prisma";
 import { T } from "@/components/i18n/text";
 import { TranslatedInput } from "@/components/i18n/translated-controls";
 import { Button } from "@/components/ui/button";
+import { EmptyState } from "@/components/ui/empty-state";
+import { PageHeader } from "@/components/ui/page-header";
+import { SectionCard } from "@/components/ui/section-card";
 
 export default async function DocumentsPage({
   searchParams,
@@ -54,31 +57,23 @@ export default async function DocumentsPage({
     : [];
 
   return (
-    <div className="space-y-6">
-      <section className="rounded-lg border border-line bg-panel p-6">
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-          <div>
-            <p className="text-sm font-medium uppercase tracking-wide text-muted">
-              v1.0
-            </p>
-            <h1 className="mt-2 text-3xl font-semibold">
-              <T k="documents.title" />
-            </h1>
-            <p className="mt-2 max-w-2xl text-sm leading-6 text-muted">
-              <T k="documents.description" />
-            </p>
-          </div>
-          <Link className="text-sm text-muted underline" href="/tags">
+    <div className="space-y-5 sm:space-y-6">
+      <PageHeader
+        actions={
+          <Link className="inline-flex min-h-11 items-center rounded-lg border border-line px-3 text-sm text-muted transition-colors hover:bg-background hover:text-foreground" href="/tags">
             <T k="common.manageTags" />
           </Link>
-        </div>
-      </section>
+        }
+        descriptionKey="documents.description"
+        eyebrow="v1.0"
+        titleKey="documents.title"
+      />
 
-      <section className="grid gap-4 xl:grid-cols-[20rem_1fr]">
-        <aside className="space-y-4 rounded-lg border border-line bg-panel p-4">
+      <section className="grid gap-4 xl:grid-cols-[21rem_1fr]">
+        <SectionCard className="space-y-4">
           <form action={createDocumentAction} className="space-y-3">
             <TranslatedInput
-              className="h-10 w-full rounded-md border border-line bg-background px-3 text-sm"
+              className="min-h-11 w-full rounded-lg border border-line bg-background px-3 text-base sm:text-sm"
               name="title"
               placeholderKey="documents.newTitle"
             />
@@ -89,7 +84,7 @@ export default async function DocumentsPage({
 
           <form className="space-y-3">
             <TranslatedInput
-              className="h-10 w-full rounded-md border border-line bg-background px-3 text-sm"
+              className="min-h-11 w-full rounded-lg border border-line bg-background px-3 text-base sm:text-sm"
               defaultValue={q}
               name="q"
               placeholderKey="documents.search"
@@ -110,9 +105,7 @@ export default async function DocumentsPage({
 
           <div className="space-y-2">
             {documents.length === 0 ? (
-              <p className="text-sm text-muted">
-                <T k="documents.empty" />
-              </p>
+              <EmptyState className="py-6" textKey="documents.empty" />
             ) : (
               documents.map((document) => {
                 const tags = documentTags.get(document.id) ?? [];
@@ -120,7 +113,7 @@ export default async function DocumentsPage({
 
                 return (
                   <Link
-                    className={`block rounded-md border p-3 text-sm transition-colors ${
+                    className={`block rounded-xl border p-3 text-sm transition-colors ${
                       active
                         ? "border-accent bg-background text-foreground"
                         : "border-line text-muted hover:bg-background hover:text-foreground"
@@ -149,7 +142,7 @@ export default async function DocumentsPage({
               })
             )}
           </div>
-        </aside>
+        </SectionCard>
 
         {selectedDocument ? (
           <DocumentEditor
@@ -159,9 +152,9 @@ export default async function DocumentsPage({
             tags={tagOptions}
           />
         ) : (
-          <section className="rounded-lg border border-line bg-panel p-6 text-sm text-muted">
-            <T k="documents.createToStart" />
-          </section>
+          <SectionCard>
+            <EmptyState textKey="documents.createToStart" />
+          </SectionCard>
         )}
       </section>
     </div>

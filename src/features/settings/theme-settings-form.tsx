@@ -14,7 +14,7 @@ export function ThemeSettingsForm({ initialMode }: { initialMode: "light" | "dar
       <div className="grid gap-2 sm:grid-cols-2">
         {(["light", "dark"] as const).map((mode) => (
           <label
-            className="flex cursor-pointer items-center justify-between rounded-md border border-line bg-background px-3 py-2 text-sm"
+            className="flex min-h-11 cursor-pointer items-center justify-between rounded-lg border border-line bg-background px-3 py-2 text-sm transition-colors hover:border-accent/40"
             key={mode}
           >
             <span>{mode === "dark" ? t("theme.dark") : t("theme.light")}</span>

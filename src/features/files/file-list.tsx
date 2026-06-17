@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { T } from "@/components/i18n/text";
 import { Button } from "@/components/ui/button";
+import { EmptyState } from "@/components/ui/empty-state";
 import { TagCheckboxes } from "@/features/tags/tag-checkboxes";
 import { TagChip } from "@/features/tags/tag-chip";
 import { deleteFileAction, renameFileAction, updateFileTagsAction } from "@/features/files/actions";
@@ -45,12 +46,10 @@ export function FileList({
   tagOptions: TagOption[];
 }) {
   return (
-    <section className="grid gap-4 xl:grid-cols-[22rem_1fr]">
-      <aside className="space-y-2 rounded-lg border border-line bg-panel p-3">
+    <section className="grid min-w-0 gap-4 xl:grid-cols-[22rem_1fr]">
+      <aside className="space-y-2 rounded-xl border border-line bg-panel p-3 shadow-sm">
         {files.length === 0 ? (
-          <p className="p-3 text-sm text-muted">
-            <T k="files.empty" />
-          </p>
+          <EmptyState className="py-6" textKey="files.empty" />
         ) : (
           files.map((file) => {
             const active = selectedFile?.id === file.id;
@@ -59,7 +58,7 @@ export function FileList({
             return (
               <Link
                 className={cn(
-                  "block rounded-md border p-3 text-sm transition-colors",
+                  "block rounded-xl border p-3 text-sm transition-colors",
                   active
                     ? "border-accent bg-background text-foreground"
                     : "border-line text-muted hover:bg-background hover:text-foreground",
@@ -90,7 +89,7 @@ export function FileList({
       </aside>
 
       {selectedFile ? (
-        <article className="space-y-4 rounded-lg border border-line bg-panel p-4">
+        <article className="min-w-0 space-y-4 rounded-xl border border-line bg-panel p-4 shadow-sm sm:p-5">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
             <div className="min-w-0">
               <h2 className="truncate text-2xl font-semibold">{selectedFile.filename}</h2>
@@ -102,7 +101,7 @@ export function FileList({
             </div>
             <div className="flex flex-wrap gap-2">
               <a
-                className="inline-flex h-10 items-center justify-center rounded-md border border-line bg-panel px-4 text-sm font-medium text-foreground transition-colors hover:bg-background"
+                className="inline-flex min-h-11 items-center justify-center rounded-lg border border-line bg-panel px-4 text-sm font-medium text-foreground transition-colors hover:bg-background"
                 href={`/api/files/${selectedFile.id}/download`}
               >
                 <T k="common.download" />
@@ -119,14 +118,14 @@ export function FileList({
           <FilePreview file={selectedFile} />
 
           <div className="grid gap-4 lg:grid-cols-2">
-            <form action={renameFileAction} className="rounded-md border border-line p-4">
+            <form action={renameFileAction} className="rounded-xl border border-line p-4">
               <input name="id" type="hidden" value={selectedFile.id} />
               <label className="text-sm font-medium" htmlFor="filename">
                 <T k="files.rename" />
               </label>
-              <div className="mt-2 flex gap-2">
+              <div className="mt-2 grid gap-2 sm:grid-cols-[1fr_auto]">
                 <input
-                  className="h-10 min-w-0 flex-1 rounded-md border border-line bg-background px-3 text-sm"
+                  className="min-h-11 min-w-0 rounded-lg border border-line bg-background px-3 text-base sm:text-sm"
                   defaultValue={selectedFile.filename}
                   id="filename"
                   name="filename"
@@ -138,7 +137,7 @@ export function FileList({
               </div>
             </form>
 
-            <form action={updateFileTagsAction} className="rounded-md border border-line p-4">
+            <form action={updateFileTagsAction} className="rounded-xl border border-line p-4">
               <input name="id" type="hidden" value={selectedFile.id} />
               <p className="text-sm font-medium">
                 <T k="common.tags" />
@@ -158,8 +157,8 @@ export function FileList({
           </div>
         </article>
       ) : (
-        <section className="rounded-lg border border-line bg-panel p-6 text-sm text-muted">
-          <T k="files.select" />
+        <section className="rounded-xl border border-line bg-panel p-4 shadow-sm sm:p-6">
+          <EmptyState textKey="files.select" />
         </section>
       )}
     </section>

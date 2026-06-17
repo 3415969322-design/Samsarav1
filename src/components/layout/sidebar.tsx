@@ -18,7 +18,7 @@ export function Sidebar() {
           <p className="text-xs text-muted">{t("nav.personalOs")}</p>
         </div>
       </div>
-      <nav className="space-y-1 p-4">
+      <nav className="space-y-1.5 p-4">
         {navItems.map((item) => {
           const Icon = item.icon;
           const active = pathname === item.href;
@@ -26,8 +26,8 @@ export function Sidebar() {
           return (
             <Link
               className={cn(
-                "flex items-center justify-between rounded-md px-3 py-2 text-sm text-muted transition-colors hover:bg-background hover:text-foreground",
-                active && "bg-background text-foreground",
+                "flex min-h-11 items-center justify-between rounded-lg px-3 py-2 text-sm text-muted transition-colors hover:bg-background hover:text-foreground",
+                active && "bg-background text-foreground shadow-sm",
               )}
               href={item.href}
               key={item.href}

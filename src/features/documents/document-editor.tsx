@@ -70,8 +70,8 @@ export function DocumentEditor({
   }, [archived, contentMarkdown, document.id, pinned, tagIds, title]);
 
   return (
-    <section className="grid min-h-[calc(100vh-8rem)] gap-4 xl:grid-cols-[1fr_1fr]">
-      <div className="rounded-lg border border-line bg-panel p-4">
+    <section className="grid min-h-[calc(100vh-8rem)] min-w-0 gap-4 xl:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
+      <div className="min-w-0 rounded-xl border border-line bg-panel p-4 shadow-sm sm:p-5">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div className="flex flex-wrap items-center gap-2">
             <label className="inline-flex items-center gap-2 text-sm text-muted">
@@ -109,7 +109,7 @@ export function DocumentEditor({
         </div>
 
         <input
-          className="mt-4 w-full bg-transparent text-3xl font-semibold outline-none placeholder:text-muted"
+          className="mt-4 w-full bg-transparent text-2xl font-semibold outline-none placeholder:text-muted sm:text-3xl"
           onChange={(event) => setTitle(event.target.value)}
           placeholder={t("documents.untitled")}
           value={title}
@@ -145,14 +145,14 @@ export function DocumentEditor({
         </div>
 
         <textarea
-          className="mt-4 min-h-[30rem] w-full resize-none rounded-md border border-line bg-background px-4 py-3 font-mono text-sm leading-7 outline-none ring-accent/20 focus:ring-4"
+          className="mt-4 min-h-[22rem] w-full resize-none rounded-lg border border-line bg-background px-4 py-3 font-mono text-base leading-7 outline-none ring-accent/20 focus:ring-4 sm:min-h-[30rem] sm:text-sm"
           onChange={(event) => setContentMarkdown(event.target.value)}
           placeholder={t("documents.startWriting")}
           value={contentMarkdown}
         />
       </div>
 
-      <div className="rounded-lg border border-line bg-panel p-6">
+      <div className="min-w-0 rounded-xl border border-line bg-panel p-4 shadow-sm sm:p-6">
         <div className="mb-4 flex items-center justify-between">
           <p className="text-sm font-medium text-muted">{t("common.preview")}</p>
           <div className="flex flex-wrap gap-2">
@@ -161,7 +161,7 @@ export function DocumentEditor({
             ))}
           </div>
         </div>
-        <article className="prose prose-sm max-w-none text-foreground prose-headings:text-foreground prose-p:text-muted prose-strong:text-foreground prose-code:text-foreground prose-a:text-accent">
+        <article className="prose prose-sm max-w-none overflow-hidden text-foreground prose-headings:text-foreground prose-p:text-muted prose-strong:text-foreground prose-code:text-foreground prose-a:text-accent">
           <ReactMarkdown remarkPlugins={[remarkGfm]}>
             {contentMarkdown || t("documents.nothingPreview")}
           </ReactMarkdown>

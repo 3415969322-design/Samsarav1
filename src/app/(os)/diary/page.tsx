@@ -9,6 +9,9 @@ import { requireSession } from "@/lib/auth/server";
 import { prisma } from "@/lib/db/prisma";
 import { T } from "@/components/i18n/text";
 import { TranslatedInput } from "@/components/i18n/translated-controls";
+import { EmptyState } from "@/components/ui/empty-state";
+import { PageHeader } from "@/components/ui/page-header";
+import { SectionCard } from "@/components/ui/section-card";
 
 function formatDateInput(value: Date) {
   return value.toISOString().slice(0, 10);
@@ -200,42 +203,34 @@ export default async function DiaryPage({
   );
 
   return (
-    <div className="space-y-6">
-      <section className="rounded-lg border border-line bg-panel p-6">
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-          <div>
-            <p className="text-sm font-medium uppercase tracking-wide text-muted">
-              v1.0
-            </p>
-            <h1 className="mt-2 text-3xl font-semibold">
-              <T k="diary.title" />
-            </h1>
-            <p className="mt-2 max-w-2xl text-sm leading-6 text-muted">
-              <T k="diary.description" />
-            </p>
-          </div>
-          <div className="flex gap-3">
-            <Link className="text-sm text-muted underline" href="/files">
+    <div className="space-y-5 sm:space-y-6">
+      <PageHeader
+        actions={
+          <div className="flex flex-wrap gap-2">
+            <Link className="inline-flex min-h-11 items-center rounded-lg border border-line px-3 text-sm text-muted transition-colors hover:bg-background hover:text-foreground" href="/files">
               <T k="common.files" />
             </Link>
-            <Link className="text-sm text-muted underline" href="/tags">
+            <Link className="inline-flex min-h-11 items-center rounded-lg border border-line px-3 text-sm text-muted transition-colors hover:bg-background hover:text-foreground" href="/tags">
               <T k="common.tags" />
             </Link>
           </div>
-        </div>
-      </section>
+        }
+        descriptionKey="diary.description"
+        eyebrow="v1.0"
+        titleKey="diary.title"
+      />
 
       <section className="grid gap-4 xl:grid-cols-[22rem_1fr]">
-        <aside className="space-y-4 rounded-lg border border-line bg-panel p-4">
+        <SectionCard className="space-y-4">
           <form action={createDiaryAction} className="space-y-3">
             <input
-              className="h-10 w-full rounded-md border border-line bg-background px-3 text-sm"
+              className="min-h-11 w-full rounded-lg border border-line bg-background px-3 text-base sm:text-sm"
               defaultValue={today}
               name="diaryDate"
               type="date"
             />
             <TranslatedInput
-              className="h-10 w-full rounded-md border border-line bg-background px-3 text-sm"
+              className="min-h-11 w-full rounded-lg border border-line bg-background px-3 text-base sm:text-sm"
               name="title"
               placeholderKey="diary.newTitle"
             />
@@ -246,25 +241,25 @@ export default async function DiaryPage({
 
           <form className="space-y-3">
             <TranslatedInput
-              className="h-10 w-full rounded-md border border-line bg-background px-3 text-sm"
+              className="min-h-11 w-full rounded-lg border border-line bg-background px-3 text-base sm:text-sm"
               defaultValue={q}
               name="q"
               placeholderKey="diary.search"
             />
             <input
-              className="h-10 w-full rounded-md border border-line bg-background px-3 text-sm"
+              className="min-h-11 w-full rounded-lg border border-line bg-background px-3 text-base sm:text-sm"
               defaultValue={params?.date ?? ""}
               name="date"
               type="date"
             />
             <input
-              className="h-10 w-full rounded-md border border-line bg-background px-3 text-sm"
+              className="min-h-11 w-full rounded-lg border border-line bg-background px-3 text-base sm:text-sm"
               defaultValue={params?.month ?? ""}
               name="month"
               type="month"
             />
             <TranslatedInput
-              className="h-10 w-full rounded-md border border-line bg-background px-3 text-sm"
+              className="min-h-11 w-full rounded-lg border border-line bg-background px-3 text-base sm:text-sm"
               defaultValue={params?.year ?? ""}
               max="9999"
               min="1900"
@@ -286,7 +281,7 @@ export default async function DiaryPage({
                 <T k="common.filter" />
               </Button>
               <Link
-                className="inline-flex h-10 items-center justify-center rounded-md border border-line bg-panel px-4 text-sm font-medium text-foreground transition-colors hover:bg-background"
+                className="inline-flex min-h-11 items-center justify-center rounded-lg border border-line bg-panel px-4 text-sm font-medium text-foreground transition-colors hover:bg-background"
                 href="/diary"
               >
                 <T k="common.reset" />
@@ -334,9 +329,7 @@ export default async function DiaryPage({
 
           <div className="space-y-2 border-t border-line pt-4">
             {diaries.length === 0 ? (
-              <p className="text-sm text-muted">
-                <T k="diary.empty" />
-              </p>
+              <EmptyState className="py-6" textKey="diary.empty" />
             ) : (
               diaries.map((diary) => {
                 const tags = diaryTags.get(diary.id) ?? [];
@@ -345,7 +338,7 @@ export default async function DiaryPage({
 
                 return (
                   <Link
-                    className={`block rounded-md border p-3 text-sm transition-colors ${
+                    className={`block rounded-xl border p-3 text-sm transition-colors ${
                       active
                         ? "border-accent bg-background text-foreground"
                         : "border-line text-muted hover:bg-background hover:text-foreground"
@@ -393,7 +386,7 @@ export default async function DiaryPage({
               })
             )}
           </div>
-        </aside>
+        </SectionCard>
 
         {selectedDiary ? (
           <DiaryEditor
@@ -406,9 +399,9 @@ export default async function DiaryPage({
             tags={tagOptions}
           />
         ) : (
-          <section className="rounded-lg border border-line bg-panel p-6 text-sm text-muted">
-            <T k="diary.createToStart" />
-          </section>
+          <SectionCard>
+            <EmptyState textKey="diary.createToStart" />
+          </SectionCard>
         )}
       </section>
     </div>

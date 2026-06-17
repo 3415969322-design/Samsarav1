@@ -23,15 +23,15 @@ export default async function LoginPage({
   const hasDatabaseError = params?.error === "database";
 
   return (
-    <main className="flex min-h-screen items-center justify-center px-4">
-      <section className="w-full max-w-md rounded-lg border border-line bg-panel p-6 shadow-sm">
+    <main className="flex min-h-screen items-center justify-center bg-background px-4 py-8">
+      <section className="w-full max-w-md rounded-2xl border border-line bg-panel p-5 shadow-sm sm:p-7">
         <div className="mb-4 flex justify-end">
-          <LanguageToggle className="h-10 px-3" />
+          <LanguageToggle className="min-h-11 px-3" />
         </div>
-        <p className="text-sm font-medium uppercase tracking-[0.2em] text-muted">
+        <p className="text-xs font-semibold uppercase tracking-[0.22em] text-muted">
           Samsara
         </p>
-        <h1 className="mt-4 text-3xl font-semibold">
+        <h1 className="mt-3 text-2xl font-semibold tracking-tight sm:text-3xl">
           <T k="login.title" />
         </h1>
         <p className="mt-3 text-sm leading-6 text-muted">
@@ -44,7 +44,7 @@ export default async function LoginPage({
           </label>
           <TranslatedInput
             autoComplete="email"
-            className="h-11 w-full rounded-md border border-line bg-background px-3 text-sm outline-none ring-accent/20 transition focus:ring-4"
+            className="min-h-11 w-full rounded-lg border border-line bg-background px-3 text-base outline-none ring-accent/20 transition focus:ring-4 sm:text-sm"
             id="email"
             name="email"
             placeholderKey="login.email"
@@ -56,7 +56,7 @@ export default async function LoginPage({
           </label>
           <input
             autoComplete="current-password"
-            className="h-11 w-full rounded-md border border-line bg-background px-3 text-sm outline-none ring-accent/20 transition focus:ring-4"
+            className="min-h-11 w-full rounded-lg border border-line bg-background px-3 text-base outline-none ring-accent/20 transition focus:ring-4 sm:text-sm"
             id="password"
             name="password"
             required

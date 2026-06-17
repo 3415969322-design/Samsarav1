@@ -9,6 +9,8 @@ import { prisma } from "@/lib/db/prisma";
 import { T } from "@/components/i18n/text";
 import { TranslatedInput, TranslatedSelect } from "@/components/i18n/translated-controls";
 import { Button } from "@/components/ui/button";
+import { PageHeader } from "@/components/ui/page-header";
+import { SectionCard } from "@/components/ui/section-card";
 
 export default async function FilesPage({
   searchParams,
@@ -72,38 +74,30 @@ export default async function FilesPage({
   );
 
   return (
-    <div className="space-y-6">
-      <section className="rounded-lg border border-line bg-panel p-6">
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-          <div>
-            <p className="text-sm font-medium uppercase tracking-wide text-muted">
-              v1.0
-            </p>
-            <h1 className="mt-2 text-3xl font-semibold">
-              <T k="files.title" />
-            </h1>
-            <p className="mt-2 max-w-2xl text-sm leading-6 text-muted">
-              <T k="files.description" />
-            </p>
-          </div>
-          <Link className="text-sm text-muted underline" href="/tags">
+    <div className="space-y-5 sm:space-y-6">
+      <PageHeader
+        actions={
+          <Link className="inline-flex min-h-11 items-center rounded-lg border border-line px-3 text-sm text-muted transition-colors hover:bg-background hover:text-foreground" href="/tags">
             <T k="common.manageTags" />
           </Link>
-        </div>
-      </section>
+        }
+        descriptionKey="files.description"
+        eyebrow="v1.0"
+        titleKey="files.title"
+      />
 
-      <section className="rounded-lg border border-line bg-panel p-4">
+      <SectionCard>
         <form action={uploadFileAction} className="grid gap-3" encType="multipart/form-data">
           <div className="grid gap-3 md:grid-cols-[1fr_1fr]">
             <input
-              className="h-11 rounded-md border border-line bg-background px-3 py-2 text-sm"
+              className="min-h-11 rounded-lg border border-line bg-background px-3 py-2 text-base sm:text-sm"
               name="file"
               required
               type="file"
               accept={supportedExtensions.join(",")}
             />
             <TranslatedInput
-              className="h-11 rounded-md border border-line bg-background px-3 text-sm"
+              className="min-h-11 rounded-lg border border-line bg-background px-3 text-base sm:text-sm"
               name="filename"
               placeholderKey="files.optionalName"
             />
@@ -115,18 +109,18 @@ export default async function FilesPage({
             </Button>
           </div>
         </form>
-      </section>
+      </SectionCard>
 
-      <section className="rounded-lg border border-line bg-panel p-4">
+      <SectionCard>
         <form className="grid gap-3 md:grid-cols-[1fr_12rem_auto]">
           <TranslatedInput
-            className="h-10 rounded-md border border-line bg-background px-3 text-sm"
+            className="min-h-11 rounded-lg border border-line bg-background px-3 text-base sm:text-sm"
             defaultValue={q}
             name="q"
             placeholderKey="files.search"
           />
           <TranslatedSelect
-            className="h-10 rounded-md border border-line bg-background px-3 text-sm"
+            className="min-h-11 rounded-lg border border-line bg-background px-3 text-base sm:text-sm"
             defaultValue={type}
             name="type"
             options={[
@@ -141,7 +135,7 @@ export default async function FilesPage({
             <T k="common.apply" />
           </Button>
         </form>
-      </section>
+      </SectionCard>
 
       <FileList
         fileTags={fileTags}

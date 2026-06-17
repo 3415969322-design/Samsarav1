@@ -28,7 +28,7 @@ export function TagCheckboxes({
     <div className="flex flex-wrap gap-2">
       {tags.map((tag) => (
         <label
-          className="inline-flex cursor-pointer items-center gap-2 rounded-full border border-line bg-background px-2.5 py-1 text-xs"
+          className="inline-flex min-h-10 cursor-pointer items-center gap-2 rounded-full border border-line bg-background px-3 py-1 text-xs transition-colors hover:border-accent/40"
           key={tag.id}
         >
           <input
