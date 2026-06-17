@@ -1,3 +1,4 @@
+import { BottomNavigation } from "@/components/layout/bottom-navigation";
 import type { SessionPayload } from "@/lib/auth/session";
 import { CommandPalette } from "@/components/command/command-palette";
 import { Sidebar } from "@/components/layout/sidebar";
@@ -15,8 +16,11 @@ export function AppShell({
       <Sidebar />
       <div className="flex min-w-0 flex-1 flex-col">
         <TopBar session={session} />
-        <main className="flex-1 px-4 py-6 sm:px-6 lg:px-8">{children}</main>
+        <main className="flex-1 px-4 pb-28 pt-5 sm:px-6 sm:pt-6 lg:px-8 lg:pb-6">
+          {children}
+        </main>
       </div>
+      <BottomNavigation />
       <CommandPalette />
     </div>
   );
