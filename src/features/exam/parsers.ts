@@ -1,6 +1,4 @@
 import crypto from "node:crypto";
-import mammoth from "mammoth";
-import { PDFParse } from "pdf-parse";
 import type { ParsedExamFile } from "@/features/exam/types";
 
 const supportedExtensions = [".pdf", ".docx", ".txt"] as const;
@@ -37,6 +35,7 @@ export async function parseExamFile(file: File): Promise<ParsedExamFile> {
   let contentText = "";
 
   if (extension === ".pdf" || mimeType === "application/pdf") {
+    const { PDFParse } = await import("pdf-parse");
     const parser = new PDFParse({ data: buffer });
 
     try {
@@ -50,6 +49,7 @@ export async function parseExamFile(file: File): Promise<ParsedExamFile> {
     mimeType ===
       "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
   ) {
+    const mammoth = await import("mammoth");
     const result = await mammoth.extractRawText({ buffer });
     contentText = result.value;
   } else {

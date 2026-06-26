@@ -2,8 +2,6 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { generateExamFromText } from "@/features/exam/generator";
-import { createContentHash, parseExamFile } from "@/features/exam/parsers";
 import {
   examPracticeModes,
   type ExamAnswerPayload,
@@ -130,6 +128,11 @@ export async function uploadExamSourceAction(formData: FormData) {
   let sourceId = "";
 
   try {
+    const [{ createContentHash, parseExamFile }, { generateExamFromText }] =
+      await Promise.all([
+        import("@/features/exam/parsers"),
+        import("@/features/exam/generator"),
+      ]);
     const parsedFile = await parseExamFile(file);
     const generatedExam = await generateExamFromText(parsedFile.contentText);
     const title =
