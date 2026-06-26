@@ -81,6 +81,30 @@ enum AIIntent {
   SEARCH_KNOWLEDGE
 }
 
+enum ExamQuestionType {
+  MULTIPLE_CHOICE
+  TRUE_FALSE
+  SHORT_ANSWER
+}
+
+enum ExamDifficulty {
+  EASY
+  MEDIUM
+  HARD
+}
+
+enum ExamPracticeMode {
+  SEQUENTIAL
+  RANDOM
+  WRONG_ONLY
+}
+
+enum ExamSourceStatus {
+  PARSING
+  READY
+  FAILED
+}
+
 model User {
   id           String   @id @default(cuid())
   email        String   @unique
@@ -98,6 +122,13 @@ model User {
   settings  Setting[]
   tags      Tag[]
   todos     Todo[]
+
+  examAnswers         ExamAnswer[]
+  examKnowledgePoints ExamKnowledgePoint[]
+  examPracticeSessions ExamPracticeSession[]
+  examQuestions       ExamQuestion[]
+  examSources         ExamSource[]
+  examWrongRecords    ExamWrongRecord[]
 }
 
 model Setting {
@@ -256,4 +287,138 @@ model FileOnEntity {
 
   @@unique([fileId, entityType, entityId, relationType])
   @@index([entityType, entityId])
+}
+
+model ExamSource {
+  id           String           @id @default(cuid())
+  userId       String
+  title        String
+  filename     String
+  mimeType     String
+  size         BigInt
+  contentText  String
+  contentHash  String?
+  status       ExamSourceStatus @default(READY)
+  errorMessage String?
+  createdAt    DateTime         @default(now())
+  updatedAt    DateTime         @updatedAt
+
+  answers         ExamAnswer[]
+  knowledgePoints ExamKnowledgePoint[]
+  practiceSessions ExamPracticeSession[]
+  questions       ExamQuestion[]
+  user            User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
+  wrongRecords    ExamWrongRecord[]
+
+  @@index([userId, status, createdAt])
+  @@index([userId, contentHash])
+}
+
+model ExamKnowledgePoint {
+  id         String         @id @default(cuid())
+  userId     String
+  sourceId   String
+  title      String
+  summary    String
+  difficulty ExamDifficulty @default(MEDIUM)
+  orderIndex Int            @default(0)
+  createdAt  DateTime       @default(now())
+  updatedAt  DateTime       @updatedAt
+
+  answers      ExamAnswer[]
+  questions    ExamQuestion[]
+  source       ExamSource        @relation(fields: [sourceId], references: [id], onDelete: Cascade)
+  user         User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  wrongRecords ExamWrongRecord[]
+
+  @@index([userId, sourceId, orderIndex])
+  @@index([userId, difficulty])
+}
+
+model ExamQuestion {
+  id               String           @id @default(cuid())
+  userId           String
+  sourceId         String
+  knowledgePointId String?
+  type             ExamQuestionType
+  difficulty       ExamDifficulty   @default(MEDIUM)
+  stem             String
+  optionsJson      Json?
+  answerJson       Json
+  explanation      String
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
+
+  answers        ExamAnswer[]
+  knowledgePoint ExamKnowledgePoint? @relation(fields: [knowledgePointId], references: [id], onDelete: SetNull)
+  source         ExamSource          @relation(fields: [sourceId], references: [id], onDelete: Cascade)
+  user           User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  wrongRecords   ExamWrongRecord[]
+
+  @@index([userId, sourceId, type, difficulty])
+  @@index([knowledgePointId])
+}
+
+model ExamPracticeSession {
+  id        String           @id @default(cuid())
+  userId    String
+  sourceId  String?
+  mode      ExamPracticeMode
+  questionOrderJson Json
+  total     Int              @default(0)
+  correct   Int              @default(0)
+  score     Float            @default(0)
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @updatedAt
+
+  answers ExamAnswer[]
+  source  ExamSource?  @relation(fields: [sourceId], references: [id], onDelete: SetNull)
+  user    User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, mode, createdAt])
+  @@index([sourceId])
+}
+
+model ExamAnswer {
+  id               String   @id @default(cuid())
+  userId           String
+  sessionId        String
+  questionId       String
+  sourceId         String
+  knowledgePointId String?
+  answerJson       Json
+  isCorrect        Boolean
+  createdAt        DateTime @default(now())
+
+  knowledgePoint ExamKnowledgePoint?  @relation(fields: [knowledgePointId], references: [id], onDelete: SetNull)
+  question       ExamQuestion         @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  session        ExamPracticeSession  @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  source         ExamSource           @relation(fields: [sourceId], references: [id], onDelete: Cascade)
+  user           User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([sessionId, questionId])
+  @@index([userId, isCorrect, createdAt])
+  @@index([knowledgePointId])
+}
+
+model ExamWrongRecord {
+  id               String   @id @default(cuid())
+  userId           String
+  questionId       String
+  sourceId         String
+  knowledgePointId String?
+  wrongCount       Int      @default(1)
+  lastAnswerJson   Json?
+  lastWrongAt      DateTime @default(now())
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  knowledgePoint ExamKnowledgePoint? @relation(fields: [knowledgePointId], references: [id], onDelete: SetNull)
+  question       ExamQuestion        @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  source         ExamSource          @relation(fields: [sourceId], references: [id], onDelete: Cascade)
+  user           User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, questionId])
+  @@index([userId, lastWrongAt])
+  @@index([knowledgePointId])
 }

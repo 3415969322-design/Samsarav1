@@ -3,6 +3,7 @@ import {
   CalendarDays,
   CheckSquare,
   FolderOpen,
+  GraduationCap,
   LayoutDashboard,
   Search,
   Settings,
@@ -27,5 +28,6 @@ export const navItems = [
   { href: "/files", icon: FolderOpen, labelKey: "nav.files", phase: "v1.0" },
   { href: "/diary", icon: CalendarDays, labelKey: "nav.diary", phase: "v1.0" },
   { href: "/ai", icon: Bot, labelKey: "nav.ai", phase: "v1.0" },
+  { href: "/exam-upload", icon: GraduationCap, labelKey: "nav.exam", phase: "v1.1" },
   { href: "/settings", icon: Settings, labelKey: "nav.settings", phase: "v1.0" },
 ] as const satisfies readonly NavItem[];
