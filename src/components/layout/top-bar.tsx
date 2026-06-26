@@ -13,9 +13,9 @@ export function TopBar({ session }: { session: SessionPayload }) {
   const { t } = useLanguage();
 
   return (
-    <header className="sticky top-0 z-30 flex h-14 items-center justify-between border-b border-line bg-panel/95 px-3 backdrop-blur sm:h-16 sm:px-6">
+    <header className="sticky top-0 z-30 flex h-14 items-center justify-between border-b border-line/80 bg-panel/88 px-3 shadow-sm shadow-black/[0.03] backdrop-blur-xl sm:h-16 sm:px-6">
       <button
-        className="flex min-h-11 min-w-0 flex-1 items-center gap-2 rounded-lg border border-line bg-background px-3 text-left text-sm text-muted transition-colors hover:border-accent/40 hover:text-foreground sm:max-w-md"
+        className="flex min-h-11 min-w-0 flex-1 items-center gap-2 rounded-lg border border-line/85 bg-background/72 px-3 text-left text-sm text-muted transition-all duration-200 hover:-translate-y-0.5 hover:border-accent/45 hover:text-foreground hover:shadow-sm active:translate-y-0 active:scale-[0.99] sm:max-w-md"
         onClick={() => window.dispatchEvent(new Event("samsara:open-command-palette"))}
         type="button"
       >

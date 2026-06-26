@@ -11,8 +11,8 @@ export function Sidebar() {
   const { t } = useLanguage();
 
   return (
-    <aside className="relative z-10 hidden w-72 shrink-0 border-r border-line bg-panel lg:block">
-      <div className="flex h-16 items-center border-b border-line px-6">
+    <aside className="relative z-10 hidden w-72 shrink-0 border-r border-line/85 bg-panel/92 backdrop-blur-xl lg:block">
+      <div className="flex h-16 items-center border-b border-line/80 px-6">
         <div>
           <p className="text-lg font-semibold">Samsara</p>
           <p className="text-xs text-muted">{t("nav.personalOs")}</p>
@@ -26,8 +26,8 @@ export function Sidebar() {
           return (
             <Link
               className={cn(
-                "flex min-h-11 items-center justify-between rounded-lg px-3 py-2 text-sm text-muted transition-colors hover:bg-background hover:text-foreground",
-                active && "bg-background text-foreground shadow-sm",
+                "flex min-h-11 items-center justify-between rounded-lg px-3 py-2 text-sm text-muted transition-all duration-200 hover:-translate-y-0.5 hover:bg-background/82 hover:text-foreground hover:shadow-sm active:translate-y-0 active:scale-[0.99]",
+                active && "bg-background/90 text-foreground shadow-sm ring-1 ring-line/70",
               )}
               href={item.href}
               key={item.href}
