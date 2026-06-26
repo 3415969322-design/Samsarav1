@@ -6,7 +6,11 @@ const supportedExtensions = [".pdf", ".docx", ".txt"] as const;
 
 function normalizeText(text: string) {
   return text
+    .replace(/\u0000/g, "")
+    .replace(/[\u0001-\u0008\u000b\u000c\u000e-\u001f\u007f]/g, " ")
+    .replace(/\ufffd/g, " ")
     .replace(/\r\n/g, "\n")
+    .replace(/\r/g, "\n")
     .replace(/\t/g, " ")
     .replace(/[ \u00a0]+/g, " ")
     .replace(/\n{3,}/g, "\n\n")
