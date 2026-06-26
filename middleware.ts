@@ -11,6 +11,10 @@ const protectedPrefixes = [
   "/files",
   "/diary",
   "/ai",
+  "/exam-bank",
+  "/exam-practice",
+  "/exam-upload",
+  "/exam-wrongbook",
   "/settings",
 ];
 
@@ -49,6 +53,10 @@ export const config = {
     "/files/:path*",
     "/diary/:path*",
     "/ai/:path*",
+    "/exam-bank/:path*",
+    "/exam-practice/:path*",
+    "/exam-upload/:path*",
+    "/exam-wrongbook/:path*",
     "/settings/:path*",
   ],
 };
