@@ -1,7 +1,11 @@
 import crypto from "node:crypto";
+import { createRequire } from "node:module";
 import type { ParsedExamFile } from "@/features/exam/types";
 
 const supportedExtensions = [".pdf", ".docx", ".txt"] as const;
+const require = createRequire(import.meta.url);
+
+type PdfParse = (dataBuffer: Buffer) => Promise<{ text: string }>;
 
 function normalizeText(text: string) {
   return text
@@ -35,15 +39,9 @@ export async function parseExamFile(file: File): Promise<ParsedExamFile> {
   let contentText = "";
 
   if (extension === ".pdf" || mimeType === "application/pdf") {
-    const { PDFParse } = await import("pdf-parse");
-    const parser = new PDFParse({ data: buffer });
-
-    try {
-      const result = await parser.getText();
-      contentText = result.text;
-    } finally {
-      await parser.destroy();
-    }
+    const pdfParse = require("pdf-parse") as PdfParse;
+    const result = await pdfParse(buffer);
+    contentText = result.text;
   } else if (
     extension === ".docx" ||
     mimeType ===
