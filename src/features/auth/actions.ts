@@ -5,7 +5,6 @@ import { prisma } from "@/lib/db/prisma";
 import { hashPassword, verifyPassword } from "@/lib/auth/password";
 import { createSessionToken } from "@/lib/auth/session";
 import { clearSessionCookie, setSessionCookie } from "@/lib/auth/server";
-import { env } from "@/lib/config/env";
 
 function normalizeEmail(value: FormDataEntryValue | null) {
   return String(value ?? "").trim().toLowerCase();
@@ -69,15 +68,6 @@ export async function registerAction(formData: FormData) {
   const displayName = String(formData.get("displayName") ?? "").trim();
   const password = String(formData.get("password") ?? "");
   const confirmPassword = String(formData.get("confirmPassword") ?? "");
-  const inviteCode = String(formData.get("inviteCode") ?? "").trim();
-
-  if (!env.INVITE_CODE) {
-    redirect("/register?error=invite-unconfigured");
-  }
-
-  if (inviteCode !== env.INVITE_CODE) {
-    redirect("/register?error=invite-invalid");
-  }
 
   if (!email || !displayName) {
     redirect("/register?error=missing-fields");

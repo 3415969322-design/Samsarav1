@@ -11,8 +11,6 @@ import type { TranslationKey } from "@/lib/i18n/dictionary";
 
 const errorMessages: Record<string, TranslationKey> = {
   "email-exists": "register.emailExists",
-  "invite-invalid": "register.inviteInvalid",
-  "invite-unconfigured": "register.inviteUnconfigured",
   "missing-fields": "register.missingFields",
   "password-mismatch": "register.passwordMismatch",
   "password-short": "register.passwordShort",
@@ -97,19 +95,6 @@ export default async function RegisterPage({
           minLength={8}
           name="confirmPassword"
           placeholderKey="register.confirmPassword"
-          required
-          type="password"
-        />
-
-        <label className="block text-sm font-medium" htmlFor="inviteCode">
-          <T k="register.inviteCode" />
-        </label>
-        <TranslatedInput
-          autoComplete="off"
-          className="min-h-11 w-full rounded-lg border border-line/90 bg-background/78 px-3 text-base outline-none ring-accent/20 transition-all duration-200 focus:border-accent/60 focus:ring-4 sm:text-sm"
-          id="inviteCode"
-          name="inviteCode"
-          placeholderKey="register.inviteCode"
           required
           type="password"
         />

@@ -5,7 +5,7 @@ Samsara is a long-term Personal OS and second brain with private multi-user acco
 ## v1.0 Features
 
 - Public profile and product introduction
-- Email/password accounts with invite-code registration
+- Email/password accounts with isolated private workspaces
 - Password-protected private workspaces
 - Dashboard-first OS layout
 - Todo CRUD with priority, due date, tags, filters, sorting, and search
@@ -62,7 +62,6 @@ Required private environment variables:
 
 - `DATABASE_URL`
 - `SESSION_SECRET`
-- `INVITE_CODE`
 - `SEED_USER_EMAIL`
 - `SEED_USER_NAME`
 - `SEED_USER_PASSWORD`

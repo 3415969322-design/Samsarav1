@@ -1,5 +1,11 @@
 # Changelog
 
+## 2026-06-27 - Registration Simplification
+
+- Removed invite-code input and `INVITE_CODE` validation from `/register`.
+- Registration now requires only email, display name, password, and password confirmation.
+- Removed `INVITE_CODE` from `.env.example` and current README environment guidance.
+
 ## 2026-06-17 - v1.1 Multi-user Accounts
 
 - Added invite-code registration at `/register` with email, display name, password, confirmation, and `INVITE_CODE` validation.
