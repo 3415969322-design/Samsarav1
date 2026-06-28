@@ -1,14 +1,15 @@
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import { startExamPracticeAction, submitExamAnswerAction } from "@/features/exam/actions";
 import {
   difficultyLabels,
+  effectiveQuestionTypeLabels,
   getErrorMessage,
-  parseAnswerPayload,
   parseQuestionOrder,
-  parseStringArray,
-  questionTypeLabels,
   renderCorrectAnswer,
 } from "@/features/exam/utils";
+import { normalizeStoredQuestion } from "@/features/exam/question-processing";
+import { getExamProgress } from "@/features/exam/progress";
 import { requireSession } from "@/lib/auth/server";
 import { prisma } from "@/lib/db/prisma";
 import { Badge } from "@/components/ui/badge";
@@ -43,31 +44,73 @@ export default async function ExamPracticePage({
     index?: string;
     review?: string;
     session?: string;
+    new?: string;
   }>;
 }) {
   const session = await requireSession();
   const params = await searchParams;
   const sessionId = params?.session?.trim() || "";
   const errorMessage = getErrorMessage(params?.error);
-  const sources = await prisma.examSource.findMany({
-    orderBy: {
-      createdAt: "desc",
-    },
-    select: {
-      _count: {
-        select: {
-          questions: true,
-        },
-      },
-      id: true,
-      title: true,
-    },
-    where: {
-      userId: session.userId,
-    },
-  });
+  const startNewPractice = params?.new === "1";
 
   if (!sessionId) {
+    const [sources, recentSessions] = await Promise.all([
+      prisma.examSource.findMany({
+        orderBy: {
+          createdAt: "desc",
+        },
+        select: {
+          _count: {
+            select: {
+              questions: true,
+            },
+          },
+          id: true,
+          title: true,
+        },
+        where: {
+          userId: session.userId,
+        },
+      }),
+      prisma.examPracticeSession.findMany({
+        include: {
+          answers: {
+            select: {
+              questionId: true,
+            },
+          },
+          source: {
+            select: {
+              title: true,
+            },
+          },
+        },
+        orderBy: {
+          updatedAt: "desc",
+        },
+        take: 10,
+        where: {
+          userId: session.userId,
+        },
+      }),
+    ]);
+    const resumableSessions = recentSessions
+      .map((practiceSession) => ({
+        practiceSession,
+        progress: getExamProgress(
+          parseQuestionOrder(practiceSession.questionOrderJson),
+          practiceSession.answers.map((answer) => answer.questionId),
+        ),
+      }))
+      .filter(({ progress }) => progress.total > 0 && !progress.completed);
+    const latestSession = resumableSessions[0];
+
+    if (latestSession && !startNewPractice) {
+      redirect(
+        `/exam-practice?session=${latestSession.practiceSession.id}&index=${latestSession.progress.resumeIndex}`,
+      );
+    }
+
     return (
       <div className="space-y-5 sm:space-y-6">
         <PageHeader
@@ -89,6 +132,27 @@ export default async function ExamPracticePage({
             </p>
           </CardHeader>
           <CardContent>
+            {latestSession ? (
+              <div className="mb-5 flex flex-col gap-3 rounded-lg border border-line bg-background p-4 sm:flex-row sm:items-center sm:justify-between">
+                <div>
+                  <p className="text-sm font-medium">
+                    继续上次练习
+                    {latestSession.practiceSession.source?.title
+                      ? ` · ${latestSession.practiceSession.source.title}`
+                      : ""}
+                  </p>
+                  <p className="mt-1 text-xs text-muted">
+                    已完成 {latestSession.progress.answered} / {latestSession.progress.total} 题，进度已同步到账号。
+                  </p>
+                </div>
+                <Link
+                  className="inline-flex min-h-11 shrink-0 items-center justify-center rounded-lg bg-accent px-4 text-sm font-medium text-accent-foreground"
+                  href={`/exam-practice?session=${latestSession.practiceSession.id}&index=${latestSession.progress.resumeIndex}`}
+                >
+                  继续作答
+                </Link>
+              </div>
+            ) : null}
             <form action={startExamPracticeAction} className="grid gap-4">
               <select
                 className="min-h-11 rounded-lg border border-line bg-background px-3 text-base sm:text-sm"
@@ -182,8 +246,9 @@ export default async function ExamPracticePage({
     return <EmptyState textKey="exam.practiceNotFound" />;
   }
 
-  const correctAnswer = parseAnswerPayload(question.answerJson);
-  const options = parseStringArray(question.optionsJson);
+  const normalizedQuestion = normalizeStoredQuestion(question);
+  const correctAnswer = normalizedQuestion.answer;
+  const options = normalizedQuestion.options;
   const showReview = params?.review === "1" || Boolean(existingAnswer);
   const nextIndex = index + 1;
   const hasNext = nextIndex < questionOrder.length;
@@ -193,7 +258,7 @@ export default async function ExamPracticePage({
       <PageHeader
         actions={
           <div className="flex flex-wrap gap-2">
-            <Link className="inline-flex min-h-11 items-center rounded-lg border border-line px-3 text-sm text-muted transition-colors hover:bg-background hover:text-foreground" href="/exam-practice">
+            <Link className="inline-flex min-h-11 items-center rounded-lg border border-line px-3 text-sm text-muted transition-colors hover:bg-background hover:text-foreground" href="/exam-practice?new=1">
               新练习
             </Link>
             <Link className="inline-flex min-h-11 items-center rounded-lg border border-line px-3 text-sm text-muted transition-colors hover:bg-background hover:text-foreground" href="/exam-bank">
@@ -212,7 +277,7 @@ export default async function ExamPracticePage({
           <CardHeader
             action={
               <div className="flex flex-wrap justify-end gap-2">
-                <Badge>{questionTypeLabels[question.type]}</Badge>
+                <Badge>{effectiveQuestionTypeLabels[normalizedQuestion.kind]}</Badge>
                 <Badge>{difficultyLabels[question.difficulty]}</Badge>
               </div>
             }
@@ -221,7 +286,9 @@ export default async function ExamPracticePage({
               {question.source.title}
               {question.knowledgePoint?.title ? ` · ${question.knowledgePoint.title}` : ""}
             </p>
-            <h2 className="mt-2 text-xl font-semibold leading-8">{question.stem}</h2>
+            <h2 className="mt-2 text-xl font-semibold leading-8">
+              {normalizedQuestion.stem}
+            </h2>
           </CardHeader>
           <CardContent>
             <form action={submitExamAnswerAction} className="space-y-4">
@@ -229,7 +296,7 @@ export default async function ExamPracticePage({
               <input name="questionId" type="hidden" value={question.id} />
               <input name="sessionId" type="hidden" value={practiceSession.id} />
 
-              {question.type === "MULTIPLE_CHOICE" ? (
+              {normalizedQuestion.kind === "SINGLE_CHOICE" ? (
                 <div className="space-y-2">
                   {options.map((option, optionIndex) => (
                     <label
@@ -252,7 +319,30 @@ export default async function ExamPracticePage({
                 </div>
               ) : null}
 
-              {question.type === "TRUE_FALSE" ? (
+              {normalizedQuestion.kind === "MULTIPLE_SELECT" ? (
+                <fieldset className="space-y-2">
+                  <legend className="mb-3 text-sm text-muted">本题可多选，需选中所有正确选项。</legend>
+                  {options.map((option, optionIndex) => (
+                    <label
+                      className="flex min-h-11 cursor-pointer items-start gap-3 rounded-lg border border-line bg-background px-3 py-3 text-sm transition-colors hover:bg-panel"
+                      key={`${optionIndex}-${option}`}
+                    >
+                      <input
+                        className="mt-1 h-4 w-4"
+                        disabled={showReview}
+                        name="answer"
+                        type="checkbox"
+                        value={optionIndex}
+                      />
+                      <span>
+                        {String.fromCharCode(65 + optionIndex)}. {option}
+                      </span>
+                    </label>
+                  ))}
+                </fieldset>
+              ) : null}
+
+              {normalizedQuestion.kind === "TRUE_FALSE" ? (
                 <div className="grid gap-2 sm:grid-cols-2">
                   <label className="flex min-h-11 cursor-pointer items-center gap-3 rounded-lg border border-line bg-background px-3 text-sm transition-colors hover:bg-panel">
                     <input disabled={showReview} name="answer" required type="radio" value="true" />
@@ -265,7 +355,7 @@ export default async function ExamPracticePage({
                 </div>
               ) : null}
 
-              {question.type === "SHORT_ANSWER" ? (
+              {normalizedQuestion.kind === "SHORT_ANSWER" ? (
                 <textarea
                   className="min-h-32 w-full rounded-lg border border-line bg-background px-3 py-2 text-base outline-none ring-accent/20 focus:ring-4 sm:text-sm"
                   disabled={showReview}
@@ -309,7 +399,7 @@ export default async function ExamPracticePage({
                 ) : (
                   <Link
                     className="inline-flex min-h-11 items-center rounded-lg bg-accent px-4 text-sm font-medium text-accent-foreground transition-opacity hover:opacity-90"
-                    href="/exam-practice"
+                    href="/exam-practice?new=1"
                   >
                     完成，重新开始
                   </Link>

@@ -18,6 +18,12 @@ export type MultipleChoiceAnswer = {
   type: "MULTIPLE_CHOICE";
 };
 
+export type MultipleSelectAnswer = {
+  correctIndices: number[];
+  correctTexts: string[];
+  type: "MULTIPLE_SELECT";
+};
+
 export type TrueFalseAnswer = {
   type: "TRUE_FALSE";
   value: boolean;
@@ -31,6 +37,7 @@ export type ShortAnswer = {
 
 export type ExamAnswerPayload =
   | MultipleChoiceAnswer
+  | MultipleSelectAnswer
   | TrueFalseAnswer
   | ShortAnswer;
 

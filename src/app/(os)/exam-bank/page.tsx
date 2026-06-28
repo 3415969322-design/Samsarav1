@@ -1,11 +1,10 @@
 import Link from "next/link";
 import {
   difficultyLabels,
-  parseAnswerPayload,
-  parseStringArray,
-  questionTypeLabels,
+  effectiveQuestionTypeLabels,
   renderCorrectAnswer,
 } from "@/features/exam/utils";
+import { normalizeStoredQuestion } from "@/features/exam/question-processing";
 import { requireSession } from "@/lib/auth/server";
 import { prisma } from "@/lib/db/prisma";
 import { Badge } from "@/components/ui/badge";
@@ -36,7 +35,7 @@ export default async function ExamBankPage({
   const type = getFilter(params?.type);
   const difficulty = getFilter(params?.difficulty);
   const q = getFilter(params?.q);
-  const [sources, knowledgePoints, questions] = await Promise.all([
+  const [sources, knowledgePoints, questionRows] = await Promise.all([
     prisma.examSource.findMany({
       orderBy: {
         createdAt: "desc",
@@ -83,7 +82,6 @@ export default async function ExamBankPage({
         userId: session.userId,
         ...(sourceId ? { sourceId } : {}),
         ...(knowledgePointId ? { knowledgePointId } : {}),
-        ...(type ? { type: type as never } : {}),
         ...(difficulty ? { difficulty: difficulty as never } : {}),
         ...(q
           ? {
@@ -96,6 +94,13 @@ export default async function ExamBankPage({
       },
     }),
   ]);
+  const questions = questionRows.filter((question) => {
+    if (!type) {
+      return true;
+    }
+
+    return normalizeStoredQuestion(question).kind === type;
+  });
 
   return (
     <div className="space-y-5 sm:space-y-6">
@@ -137,7 +142,8 @@ export default async function ExamBankPage({
             name="type"
           >
             <option value="">全部题型</option>
-            <option value="MULTIPLE_CHOICE">选择题</option>
+            <option value="SINGLE_CHOICE">单选题</option>
+            <option value="MULTIPLE_SELECT">多选题</option>
             <option value="TRUE_FALSE">判断题</option>
             <option value="SHORT_ANSWER">简答题</option>
           </select>
@@ -172,21 +178,24 @@ export default async function ExamBankPage({
       ) : (
         <div className="grid gap-3 xl:grid-cols-2">
           {questions.map((question) => {
-            const answer = parseAnswerPayload(question.answerJson);
-            const options = parseStringArray(question.optionsJson);
+            const normalizedQuestion = normalizeStoredQuestion(question);
+            const answer = normalizedQuestion.answer;
+            const options = normalizedQuestion.options;
 
             return (
               <SectionCard key={question.id}>
                 <CardHeader
                   action={
                     <div className="flex flex-wrap justify-end gap-2">
-                      <Badge>{questionTypeLabels[question.type]}</Badge>
+                      <Badge>{effectiveQuestionTypeLabels[normalizedQuestion.kind]}</Badge>
                       <Badge>{difficultyLabels[question.difficulty]}</Badge>
                     </div>
                   }
                 >
                   <p className="text-xs text-muted">{question.source.title}</p>
-                  <h2 className="mt-2 text-base font-semibold leading-6">{question.stem}</h2>
+                  <h2 className="mt-2 text-base font-semibold leading-6">
+                    {normalizedQuestion.stem}
+                  </h2>
                 </CardHeader>
                 {options.length > 0 ? (
                   <CardContent>

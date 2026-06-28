@@ -7,6 +7,7 @@ import type {
   GeneratedKnowledgePoint,
   GeneratedQuestion,
 } from "@/features/exam/types";
+import { parseStructuredQuestionBank } from "@/features/exam/question-processing";
 
 const aiExamSchema = z.object({
   knowledgePoints: z
@@ -27,6 +28,11 @@ const aiExamSchema = z.object({
             correctIndex: z.number().int().min(0).max(3),
             correctText: z.string().min(1),
             type: z.literal("MULTIPLE_CHOICE"),
+          }),
+          z.object({
+            correctIndices: z.array(z.number().int().min(0).max(7)).min(2),
+            correctTexts: z.array(z.string().min(1)).min(2),
+            type: z.literal("MULTIPLE_SELECT"),
           }),
           z.object({
             type: z.literal("TRUE_FALSE"),
@@ -226,9 +232,11 @@ async function buildAIExam(text: string): Promise<GeneratedExam | null> {
         {
           content: [
             "你是期末复习出题助手。请只输出 JSON，不要 Markdown。",
-            "从资料中提取最多 12 个知识点，并生成选择题、判断题、简答题。",
+            "从资料中提取最多 12 个知识点，并生成单选题、多选题、判断题、简答题。",
+            "如果资料本身是题库，必须保留原题的题型、选项和正确答案，不得把多选题转成简答题。",
             "JSON schema: { knowledgePoints: [{ title, summary, difficulty }], questions: [{ type, difficulty, stem, options?, answer, explanation, knowledgePointIndex }] }。",
-            "选择题 options 必须 4 项，answer 为 { type:'MULTIPLE_CHOICE', correctIndex, correctText }。",
+            "单选题 type 为 MULTIPLE_CHOICE，options 必须 4 项，answer 为 { type:'MULTIPLE_CHOICE', correctIndex, correctText }。",
+            "多选题 type 仍为 MULTIPLE_CHOICE，options 必须 4 项，answer 为 { type:'MULTIPLE_SELECT', correctIndices, correctTexts }。",
             "判断题 answer 为 { type:'TRUE_FALSE', value }。",
             "简答题 answer 为 { type:'SHORT_ANSWER', text, keywords }。",
             `资料：\n${text.slice(0, 12000)}`,
@@ -258,5 +266,5 @@ async function buildAIExam(text: string): Promise<GeneratedExam | null> {
 }
 
 export async function generateExamFromText(text: string): Promise<GeneratedExam> {
-  return (await buildAIExam(text)) ?? buildFallbackExam(text);
+  return parseStructuredQuestionBank(text) ?? (await buildAIExam(text)) ?? buildFallbackExam(text);
 }

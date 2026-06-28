@@ -1,8 +1,11 @@
-import type { ExamAnswerPayload, ExamDifficulty, ExamQuestionType } from "@/features/exam/types";
+import type { ExamAnswerPayload, ExamDifficulty } from "@/features/exam/types";
+import type { EffectiveQuestionKind } from "@/features/exam/question-processing";
+export { parseAnswerPayload } from "@/features/exam/question-processing";
 
-export const questionTypeLabels: Record<ExamQuestionType, string> = {
-  MULTIPLE_CHOICE: "选择题",
+export const effectiveQuestionTypeLabels: Record<EffectiveQuestionKind, string> = {
+  MULTIPLE_SELECT: "多选题",
   SHORT_ANSWER: "简答题",
+  SINGLE_CHOICE: "单选题",
   TRUE_FALSE: "判断题",
 };
 
@@ -36,24 +39,6 @@ export function parseQuestionOrder(value: unknown) {
   return parseStringArray(value);
 }
 
-export function parseAnswerPayload(value: unknown): ExamAnswerPayload | null {
-  if (!value || typeof value !== "object") {
-    return null;
-  }
-
-  const payload = value as ExamAnswerPayload;
-
-  if (
-    payload.type === "MULTIPLE_CHOICE" ||
-    payload.type === "TRUE_FALSE" ||
-    payload.type === "SHORT_ANSWER"
-  ) {
-    return payload;
-  }
-
-  return null;
-}
-
 export function renderCorrectAnswer(answer: ExamAnswerPayload | null) {
   if (!answer) {
     return "暂无答案";
@@ -61,6 +46,10 @@ export function renderCorrectAnswer(answer: ExamAnswerPayload | null) {
 
   if (answer.type === "MULTIPLE_CHOICE") {
     return answer.correctText;
+  }
+
+  if (answer.type === "MULTIPLE_SELECT") {
+    return answer.correctIndices.map((index) => String.fromCharCode(65 + index)).join("、");
   }
 
   if (answer.type === "TRUE_FALSE") {

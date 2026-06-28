@@ -4,9 +4,12 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import {
   examPracticeModes,
-  type ExamAnswerPayload,
   type ExamPracticeMode,
 } from "@/features/exam/types";
+import {
+  evaluateExamAnswer,
+  normalizeStoredQuestion,
+} from "@/features/exam/question-processing";
 import { requireSession } from "@/lib/auth/server";
 import { prisma } from "@/lib/db/prisma";
 
@@ -35,86 +38,6 @@ function shuffle<T>(items: T[]) {
   }
 
   return nextItems;
-}
-
-function normalizeTextAnswer(value: string) {
-  return value
-    .toLowerCase()
-    .replace(/[^\p{Script=Han}\p{Letter}\p{Number}\s]/gu, " ")
-    .replace(/\s+/g, " ")
-    .trim();
-}
-
-function parseAnswerPayload(value: unknown): ExamAnswerPayload | null {
-  if (!value || typeof value !== "object") {
-    return null;
-  }
-
-  const payload = value as ExamAnswerPayload;
-
-  if (
-    payload.type === "MULTIPLE_CHOICE" ||
-    payload.type === "TRUE_FALSE" ||
-    payload.type === "SHORT_ANSWER"
-  ) {
-    return payload;
-  }
-
-  return null;
-}
-
-function evaluateAnswer({
-  correctAnswer,
-  options,
-  rawAnswer,
-}: {
-  correctAnswer: ExamAnswerPayload;
-  options: string[];
-  rawAnswer: string;
-}) {
-  if (correctAnswer.type === "MULTIPLE_CHOICE") {
-    const selectedIndex = Number(rawAnswer);
-
-    return {
-      answerJson: {
-        selectedIndex,
-        selectedText: options[selectedIndex] ?? "",
-        type: "MULTIPLE_CHOICE",
-      },
-      isCorrect: selectedIndex === correctAnswer.correctIndex,
-    };
-  }
-
-  if (correctAnswer.type === "TRUE_FALSE") {
-    const value = rawAnswer === "true";
-
-    return {
-      answerJson: {
-        type: "TRUE_FALSE",
-        value,
-      },
-      isCorrect: value === correctAnswer.value,
-    };
-  }
-
-  const answerText = normalizeTextAnswer(rawAnswer);
-  const expectedText = normalizeTextAnswer(correctAnswer.text);
-  const keywords = correctAnswer.keywords
-    .map((keyword) => normalizeTextAnswer(keyword))
-    .filter(Boolean);
-  const matchedKeywords = keywords.filter((keyword) => answerText.includes(keyword));
-  const isCorrect =
-    answerText.length >= 6 &&
-    (matchedKeywords.length >= Math.min(2, Math.max(1, keywords.length)) ||
-      expectedText.includes(answerText));
-
-  return {
-    answerJson: {
-      text: rawAnswer,
-      type: "SHORT_ANSWER",
-    },
-    isCorrect,
-  };
 }
 
 export async function uploadExamSourceAction(formData: FormData) {
@@ -270,10 +193,13 @@ export async function submitExamAnswerAction(formData: FormData) {
   const session = await requireSession();
   const sessionId = formString(formData, "sessionId");
   const questionId = formString(formData, "questionId");
-  const rawAnswer = formString(formData, "answer");
+  const rawAnswers = formData
+    .getAll("answer")
+    .map((value) => String(value).trim())
+    .filter(Boolean);
   const index = Number(formString(formData, "index") || "0");
 
-  if (!sessionId || !questionId || !rawAnswer) {
+  if (!sessionId || !questionId || rawAnswers.length === 0) {
     redirect(`/exam-practice?session=${sessionId}&index=${index}&error=missing-answer`);
   }
 
@@ -296,19 +222,18 @@ export async function submitExamAnswerAction(formData: FormData) {
     redirect("/exam-practice?error=not-found");
   }
 
-  const correctAnswer = parseAnswerPayload(question.answerJson);
-  const options = Array.isArray(question.optionsJson)
-    ? question.optionsJson.filter((option): option is string => typeof option === "string")
-    : [];
+  const normalizedQuestion = normalizeStoredQuestion(question);
+  const correctAnswer = normalizedQuestion.answer;
+  const options = normalizedQuestion.options;
 
   if (!correctAnswer) {
     redirect(`/exam-practice?session=${sessionId}&index=${index}&error=invalid-answer`);
   }
 
-  const result = evaluateAnswer({
+  const result = evaluateExamAnswer({
     correctAnswer,
     options,
-    rawAnswer,
+    rawAnswers,
   });
 
   await prisma.examAnswer.upsert({

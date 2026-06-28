@@ -2,10 +2,10 @@ import Link from "next/link";
 import { startExamPracticeAction } from "@/features/exam/actions";
 import {
   difficultyLabels,
-  parseAnswerPayload,
-  questionTypeLabels,
+  effectiveQuestionTypeLabels,
   renderCorrectAnswer,
 } from "@/features/exam/utils";
+import { normalizeStoredQuestion } from "@/features/exam/question-processing";
 import { requireSession } from "@/lib/auth/server";
 import { prisma } from "@/lib/db/prisma";
 import { Badge } from "@/components/ui/badge";
@@ -100,21 +100,22 @@ export default async function ExamWrongbookPage({
       ) : (
         <div className="grid gap-3 xl:grid-cols-2">
           {wrongRecords.map((record) => {
-            const answer = parseAnswerPayload(record.question.answerJson);
+            const normalizedQuestion = normalizeStoredQuestion(record.question);
+            const answer = normalizedQuestion.answer;
 
             return (
               <SectionCard key={record.id}>
                 <CardHeader
                   action={
                     <div className="flex flex-wrap justify-end gap-2">
-                      <Badge>{questionTypeLabels[record.question.type]}</Badge>
+                      <Badge>{effectiveQuestionTypeLabels[normalizedQuestion.kind]}</Badge>
                       <Badge>{difficultyLabels[record.question.difficulty]}</Badge>
                     </div>
                   }
                 >
                   <p className="text-xs text-muted">{record.source.title}</p>
                   <h2 className="mt-2 text-base font-semibold leading-6">
-                    {record.question.stem}
+                    {normalizedQuestion.stem}
                   </h2>
                 </CardHeader>
                 <CardContent className="grid gap-3 text-sm sm:grid-cols-3">
