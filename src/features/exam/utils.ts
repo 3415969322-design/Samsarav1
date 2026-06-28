@@ -70,6 +70,7 @@ export function getErrorMessage(error?: string) {
     "missing-file": "请上传 PDF、DOCX 或 TXT 文件。",
     "no-questions": "当前范围还没有可练习题目。",
     "not-found": "没有找到对应题目或练习记录。",
+    "select-wrong-source": "错题练习需要先选择一个具体的资料文件。",
   };
 
   return messages[error] ?? decodeURIComponent(error);

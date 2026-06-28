@@ -28,6 +28,12 @@ export default async function ExamWrongbookPage({
         createdAt: "desc",
       },
       select: {
+        _count: {
+          select: {
+            wrongRecords: true,
+          },
+        },
+        filename: true,
         id: true,
         title: true,
       },
@@ -35,7 +41,8 @@ export default async function ExamWrongbookPage({
         userId: session.userId,
       },
     }),
-    prisma.examWrongRecord.findMany({
+    sourceId
+      ? prisma.examWrongRecord.findMany({
       include: {
         knowledgePoint: {
           select: {
@@ -54,48 +61,83 @@ export default async function ExamWrongbookPage({
       },
       where: {
         userId: session.userId,
-        ...(sourceId ? { sourceId } : {}),
+        sourceId,
       },
-    }),
+      })
+      : Promise.resolve([]),
   ]);
+  const selectedSource = sources.find((source) => source.id === sourceId) ?? null;
 
   return (
     <div className="space-y-5 sm:space-y-6">
       <PageHeader
         actions={
-          <form action={startExamPracticeAction}>
-            <input name="mode" type="hidden" value="WRONG_ONLY" />
-            <input name="sourceId" type="hidden" value={sourceId} />
-            <Button disabled={wrongRecords.length === 0} type="submit" variant="primary">
-              练习错题
-            </Button>
-          </form>
+          selectedSource ? (
+            <form action={startExamPracticeAction}>
+              <input name="mode" type="hidden" value="WRONG_ONLY" />
+              <input name="sourceId" type="hidden" value={selectedSource.id} />
+              <Button disabled={wrongRecords.length === 0} type="submit" variant="primary">
+                练习这份资料的错题
+              </Button>
+            </form>
+          ) : null
         }
-        badge={<Badge>{wrongRecords.length} 条</Badge>}
+        badge={
+          <Badge>
+            {selectedSource ? `${wrongRecords.length} 道错题` : `${sources.length} 个资料库`}
+          </Badge>
+        }
         descriptionKey="exam.wrongbookDescription"
         eyebrow="Exam Review"
         titleKey="exam.wrongbookTitle"
       />
 
-      <SectionCard>
-        <form className="grid gap-3 sm:grid-cols-[1fr_auto]">
-          <select
-            className="min-h-11 rounded-lg border border-line bg-background px-3 text-base sm:text-sm"
-            defaultValue={sourceId}
-            name="source"
-          >
-            <option value="">全部资料</option>
-            {sources.map((source) => (
-              <option key={source.id} value={source.id}>
-                {source.title}
-              </option>
-            ))}
-          </select>
-          <Button type="submit">筛选</Button>
-        </form>
-      </SectionCard>
+      {selectedSource ? (
+        <SectionCard>
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <p className="font-medium">{selectedSource.title}</p>
+              <p className="mt-1 text-xs text-muted">{selectedSource.filename}</p>
+            </div>
+            <Link
+              className="inline-flex min-h-11 items-center justify-center rounded-lg border border-line px-4 text-sm text-muted transition-colors hover:bg-background hover:text-foreground"
+              href="/exam-wrongbook"
+            >
+              返回资料错题库
+            </Link>
+          </div>
+        </SectionCard>
+      ) : null}
 
-      {wrongRecords.length === 0 ? (
+      {!selectedSource ? (
+        sources.length === 0 ? (
+          <EmptyState textKey="exam.emptyWrongbook" />
+        ) : (
+          <SectionCard>
+            <CardHeader>
+              <h2 className="text-lg font-semibold">按资料分开的错题库</h2>
+              <p className="mt-1 text-sm leading-6 text-muted">
+                每份上传资料都有独立错题记录，不会与其他文件混合。
+              </p>
+            </CardHeader>
+            <CardContent className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+              {sources.map((source) => (
+                <Link
+                  className="rounded-lg border border-line bg-background p-4 transition-colors hover:border-accent/40 hover:bg-panel"
+                  href={`/exam-wrongbook?source=${source.id}`}
+                  key={source.id}
+                >
+                  <p className="font-medium">{source.title}</p>
+                  <p className="mt-1 truncate text-xs text-muted">{source.filename}</p>
+                  <p className="mt-4 text-sm">
+                    <span className="font-semibold">{source._count.wrongRecords}</span> 道错题
+                  </p>
+                </Link>
+              ))}
+            </CardContent>
+          </SectionCard>
+        )
+      ) : wrongRecords.length === 0 ? (
         <EmptyState textKey="exam.emptyWrongbook" />
       ) : (
         <div className="grid gap-3 xl:grid-cols-2">
@@ -113,7 +155,7 @@ export default async function ExamWrongbookPage({
                     </div>
                   }
                 >
-                  <p className="text-xs text-muted">{record.source.title}</p>
+                  <p className="text-xs text-muted">{selectedSource.title}</p>
                   <h2 className="mt-2 text-base font-semibold leading-6">
                     {normalizedQuestion.stem}
                   </h2>

@@ -158,7 +158,7 @@ export default async function ExamPracticePage({
                 className="min-h-11 rounded-lg border border-line bg-background px-3 text-base sm:text-sm"
                 name="sourceId"
               >
-                <option value="">全部资料</option>
+                <option value="">全部资料（仅顺序/随机练习）</option>
                 {sources.map((source) => (
                   <option key={source.id} value={source.id}>
                     {source.title}（{source._count.questions} 题）
@@ -406,7 +406,7 @@ export default async function ExamPracticePage({
                 )}
                 <Link
                   className="inline-flex min-h-11 items-center rounded-lg border border-line px-4 text-sm text-muted transition-colors hover:bg-background hover:text-foreground"
-                  href="/exam-wrongbook"
+                  href={`/exam-wrongbook?source=${question.sourceId}`}
                 >
                   查看错题本
                 </Link>

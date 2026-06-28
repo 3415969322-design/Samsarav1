@@ -133,6 +133,10 @@ export async function startExamPracticeAction(formData: FormData) {
   let questionIds: string[] = [];
 
   if (mode === "WRONG_ONLY") {
+    if (!sourceId) {
+      redirect("/exam-practice?new=1&error=select-wrong-source");
+    }
+
     const wrongRecords = await prisma.examWrongRecord.findMany({
       include: {
         question: {
