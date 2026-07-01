@@ -287,6 +287,13 @@ export async function submitExamAnswerAction(formData: FormData) {
         },
       },
     });
+  } else {
+    await prisma.examWrongRecord.deleteMany({
+      where: {
+        questionId: question.id,
+        userId: session.userId,
+      },
+    });
   }
 
   const [answered, correct] = await Promise.all([
