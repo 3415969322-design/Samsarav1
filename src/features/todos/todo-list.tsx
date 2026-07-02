@@ -74,11 +74,18 @@ export function TodoList({
                     <button
                       aria-label="Toggle todo completion"
                       className={cn(
-                        "h-6 w-6 rounded-md border border-line transition-colors hover:border-accent",
-                        todo.status === "DONE" && "bg-accent",
+                        "relative -m-2 flex h-11 w-11 items-center justify-center rounded-lg transition-colors hover:bg-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2",
                       )}
                       type="submit"
-                    />
+                    >
+                      <span
+                        aria-hidden="true"
+                        className={cn(
+                          "h-6 w-6 rounded-md border border-line transition-colors",
+                          todo.status === "DONE" && "border-accent bg-accent",
+                        )}
+                      />
+                    </button>
                   </form>
                   <h2
                     className={cn(

@@ -18,11 +18,8 @@ export default async function SearchPage({
 
   return (
     <div className="space-y-6">
-      <section className="rounded-lg border border-line bg-panel p-6">
-        <p className="text-sm font-medium uppercase tracking-wide text-muted">
-          v1.0
-        </p>
-        <h1 className="mt-2 text-3xl font-semibold">
+      <section className="rounded-xl border border-line bg-panel p-6 shadow-sm">
+        <h1 className="text-3xl font-semibold">
           <T k="search.title" />
         </h1>
         <p className="mt-2 max-w-2xl text-sm leading-6 text-muted">
@@ -30,7 +27,7 @@ export default async function SearchPage({
         </p>
       </section>
 
-      <section className="rounded-lg border border-line bg-panel p-4">
+      <section className="rounded-xl border border-line bg-panel p-4 shadow-sm">
         <form className="grid gap-3 sm:grid-cols-[1fr_auto]">
           <TranslatedInput
             className="h-11 rounded-md border border-line bg-background px-3 text-sm"

@@ -61,7 +61,6 @@ export default async function SettingsPage({
     <div className="space-y-5 sm:space-y-6">
       <PageHeader
         descriptionKey="settings.description"
-        eyebrow="v1.0"
         titleKey="settings.title"
       />
       {statusMessageKey ? (

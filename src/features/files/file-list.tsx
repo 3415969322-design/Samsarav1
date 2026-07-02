@@ -71,7 +71,7 @@ export function FileList({
                     <p className="truncate font-medium">{file.filename}</p>
                     <p className="mt-1 text-xs">{formatFileSize(file.size)}</p>
                   </div>
-                  <span className="rounded-full border border-line px-2 py-0.5 text-[10px]">
+                  <span className="rounded-full border border-line px-2 py-0.5 text-xs">
                     {file.mimeType.split("/").at(-1)}
                   </span>
                 </div>

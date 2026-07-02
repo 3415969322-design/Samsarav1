@@ -44,7 +44,7 @@ export default async function LoginPage({
         </label>
         <TranslatedInput
           autoComplete="email"
-          className="min-h-11 w-full rounded-lg border border-line/90 bg-background/78 px-3 text-base outline-none ring-accent/20 transition-all duration-200 focus:border-accent/60 focus:ring-4 sm:text-sm"
+          className="min-h-11 w-full rounded-lg border border-line/90 bg-background/78 px-3 text-base outline-none ring-accent/20 transition-colors duration-150 focus:border-accent/60 focus:ring-4 sm:text-sm"
           id="email"
           name="email"
           placeholderKey="login.email"
@@ -56,7 +56,7 @@ export default async function LoginPage({
         </label>
         <input
           autoComplete="current-password"
-          className="min-h-11 w-full rounded-lg border border-line/90 bg-background/78 px-3 text-base outline-none ring-accent/20 transition-all duration-200 focus:border-accent/60 focus:ring-4 sm:text-sm"
+          className="min-h-11 w-full rounded-lg border border-line/90 bg-background/78 px-3 text-base outline-none ring-accent/20 transition-colors duration-150 focus:border-accent/60 focus:ring-4 sm:text-sm"
           id="password"
           name="password"
           required

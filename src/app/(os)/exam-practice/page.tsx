@@ -120,7 +120,6 @@ export default async function ExamPracticePage({
             </Link>
           }
           descriptionKey="exam.practiceDescription"
-          eyebrow="Exam Review"
           titleKey="exam.practiceTitle"
         />
 
@@ -268,7 +267,7 @@ export default async function ExamPracticePage({
         }
         badge={<Badge>{renderProgress(index, questionOrder.length)}</Badge>}
         descriptionKey="exam.practiceDescription"
-        eyebrow={practiceSession.source?.title ?? "Exam Review"}
+        eyebrow={practiceSession.source?.title}
         titleKey="exam.practiceTitle"
       />
 

@@ -65,7 +65,6 @@ export default async function DocumentsPage({
           </Link>
         }
         descriptionKey="documents.description"
-        eyebrow="v1.0"
         titleKey="documents.title"
       />
 

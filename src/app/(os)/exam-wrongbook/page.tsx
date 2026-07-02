@@ -88,7 +88,6 @@ export default async function ExamWrongbookPage({
           </Badge>
         }
         descriptionKey="exam.wrongbookDescription"
-        eyebrow="Exam Review"
         titleKey="exam.wrongbookTitle"
       />
 

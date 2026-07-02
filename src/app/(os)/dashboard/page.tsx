@@ -128,7 +128,7 @@ export default function DashboardPage() {
             <form action={createTodoAction} className="grid gap-3 sm:grid-cols-[1fr_auto]">
               <input name="priority" type="hidden" value="MEDIUM" />
               <TranslatedInput
-                className="min-h-11 rounded-lg border border-line bg-background px-3 text-base outline-none ring-accent/20 transition-all duration-200 focus:ring-4 sm:text-sm"
+                className="min-h-11 rounded-lg border border-line bg-background px-3 text-base outline-none ring-accent/20 transition-colors duration-150 focus:ring-4 sm:text-sm"
                 name="title"
                 placeholderKey="dashboard.quickAddPlaceholder"
                 required
@@ -214,12 +214,12 @@ export default function DashboardPage() {
 
               return (
                 <Link
-                  className="group rounded-xl border border-line bg-background p-4 shadow-sm transition-all duration-200 hover:-translate-y-1 hover:border-accent/50 hover:shadow-md active:translate-y-0 active:shadow-none"
+                  className="group rounded-xl border border-line bg-background p-4 shadow-sm transition-colors duration-150 hover:border-accent/50"
                   href={activity.href}
                   key={activity.href}
                 >
                   <div className="flex items-start gap-3">
-                    <span className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-accent/10 text-accent transition-all duration-200 group-hover:bg-accent group-hover:text-accent-foreground">
+                    <span className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-accent/10 text-accent transition-colors duration-150 group-hover:bg-accent group-hover:text-accent-foreground">
                       <Icon className="h-4 w-4" />
                     </span>
                     <span className="min-w-0">
@@ -237,7 +237,7 @@ export default function DashboardPage() {
           </CardContent>
         </SectionCard>
 
-        <SectionCard interactive>
+        <SectionCard className="hidden md:block" interactive>
           <CardHeader>
             <h2 className="font-semibold">
               <T k="dashboard.workspace" />
@@ -261,7 +261,7 @@ export default function DashboardPage() {
         </SectionCard>
       </section>
 
-      <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+      <section className="hidden gap-4 md:grid md:grid-cols-2 xl:grid-cols-3">
         {moduleCards.slice(4).map((module) => (
           <QuickActionCard
             className="min-h-24"

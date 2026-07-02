@@ -3,7 +3,7 @@ import { cn } from "@/lib/utils";
 
 type SamsaraLaceAnchorProps = {
   className?: string;
-  variant: "auth" | "topbar";
+  variant: "auth" | "mobile-auth" | "topbar";
 };
 
 export function SamsaraLaceAnchor({ className, variant }: SamsaraLaceAnchorProps) {
@@ -12,7 +12,11 @@ export function SamsaraLaceAnchor({ className, variant }: SamsaraLaceAnchorProps
       aria-hidden="true"
       className={cn(
         "samsara-lace-anchor",
-        variant === "auth" ? "samsara-lace-anchor-auth" : "samsara-lace-anchor-topbar",
+        variant === "auth"
+          ? "samsara-lace-anchor-auth"
+          : variant === "mobile-auth"
+            ? "samsara-lace-anchor-mobile-auth"
+            : "samsara-lace-anchor-topbar",
         className,
       )}
     >
@@ -20,10 +24,9 @@ export function SamsaraLaceAnchor({ className, variant }: SamsaraLaceAnchorProps
         alt=""
         className="samsara-lace-anchor-image"
         height={731}
-        priority={variant === "auth"}
-        sizes={variant === "auth" ? "(min-width: 1024px) 52vw, 0px" : "270px"}
+        priority={variant !== "topbar"}
+        sizes={variant === "auth" ? "(min-width: 1024px) 52vw, 0px" : variant === "mobile-auth" ? "208px" : "270px"}
         src="/brand/samsara-lace-anchor-cutout.webp"
-        unoptimized
         width={1600}
       />
     </div>

@@ -78,13 +78,10 @@ export default async function AiPage({
 
   return (
     <div className="space-y-6">
-      <section className="rounded-lg border border-line bg-panel p-6">
+      <section className="rounded-xl border border-line bg-panel p-6 shadow-sm">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
           <div>
-            <p className="text-sm font-medium uppercase tracking-wide text-muted">
-              v1.0
-            </p>
-            <h1 className="mt-2 text-3xl font-semibold">
+            <h1 className="text-3xl font-semibold">
               <T k="ai.title" />
             </h1>
             <p className="mt-2 max-w-2xl text-sm leading-6 text-muted">

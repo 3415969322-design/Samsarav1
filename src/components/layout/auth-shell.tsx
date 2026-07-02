@@ -18,9 +18,10 @@ export function AuthShell({ children, className }: AuthShellProps) {
         <div className="samsara-auth-brand-stage relative hidden min-h-[38rem] items-center justify-center overflow-hidden lg:flex">
           <SamsaraLaceAnchor variant="auth" />
         </div>
+        <SamsaraLaceAnchor className="mx-auto lg:hidden" variant="mobile-auth" />
         <section
           className={cn(
-            "samsara-auth-card samsara-page-enter relative w-full max-w-md justify-self-center rounded-2xl border border-line/90 bg-panel/96 p-5 shadow-sm backdrop-blur-xl sm:p-7 lg:justify-self-end",
+            "samsara-auth-card samsara-page-enter relative w-full max-w-md justify-self-center rounded-xl border border-line/90 bg-panel/96 p-5 shadow-sm backdrop-blur-xl sm:p-7 lg:justify-self-end lg:rounded-2xl",
             className,
           )}
         >

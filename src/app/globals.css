@@ -56,6 +56,11 @@ a {
   text-decoration: none;
 }
 
+:where(a, button, input, select, textarea, summary):focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
 input,
 select,
 textarea,
@@ -214,6 +219,11 @@ button {
   flex: 0 0 270px;
   height: 55px;
   width: 270px;
+}
+
+.samsara-lace-anchor-mobile-auth {
+  height: 5rem;
+  width: min(13rem, 64vw);
 }
 
 .samsara-lace-anchor-image {
@@ -423,7 +433,7 @@ button {
 
   .samsara-auth-shell {
     align-items: flex-start;
-    padding-top: 10vh;
+    padding-top: max(1.25rem, env(safe-area-inset-top));
   }
 
   .gothic-medallion-anchor-auth {

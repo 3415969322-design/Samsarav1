@@ -84,7 +84,6 @@ export default async function TodosPage({
           </Link>
         }
         descriptionKey="todo.description"
-        eyebrow="v1.0"
         titleKey="todo.title"
       />
 

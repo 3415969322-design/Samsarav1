@@ -37,9 +37,7 @@ export default async function ExamUploadPage({
   return (
     <div className="space-y-5 sm:space-y-6">
       <PageHeader
-        badge={<Badge>v1.1</Badge>}
         descriptionKey="exam.uploadDescription"
-        eyebrow="Exam Review"
         titleKey="exam.uploadTitle"
       />
 

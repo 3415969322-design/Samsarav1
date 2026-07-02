@@ -18,7 +18,7 @@ export function TopBar({ session }: { session: SessionPayload }) {
       <div className="flex min-w-0 flex-1 items-center gap-3">
         <SamsaraLaceAnchor className="hidden xl:block" variant="topbar" />
         <button
-          className="flex min-h-11 min-w-0 flex-1 items-center gap-2 rounded-lg border border-line/85 bg-background/72 px-3 text-left text-sm text-muted transition-all duration-200 hover:-translate-y-0.5 hover:border-accent/45 hover:text-foreground hover:shadow-sm active:translate-y-0 active:scale-[0.99] sm:max-w-md"
+          className="flex min-h-11 min-w-0 flex-1 items-center gap-2 rounded-lg border border-line/85 bg-background/72 px-3 text-left text-sm text-muted transition-colors duration-150 hover:border-accent/45 hover:bg-background hover:text-foreground sm:max-w-md"
           onClick={() => window.dispatchEvent(new Event("samsara:open-command-palette"))}
           type="button"
         >
@@ -45,7 +45,7 @@ export function TopBar({ session }: { session: SessionPayload }) {
           <p className="text-sm font-medium">{session.displayName}</p>
           <p className="text-xs text-muted">{session.email}</p>
         </div>
-        <form action={logoutAction}>
+        <form action={logoutAction} className="hidden sm:block">
           <Button aria-label={t("topbar.logout")} className="h-11 w-11 px-0" type="submit">
             <LogOut className="h-4 w-4" />
           </Button>

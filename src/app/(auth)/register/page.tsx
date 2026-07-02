@@ -51,7 +51,7 @@ export default async function RegisterPage({
         </label>
         <TranslatedInput
           autoComplete="email"
-          className="min-h-11 w-full rounded-lg border border-line/90 bg-background/78 px-3 text-base outline-none ring-accent/20 transition-all duration-200 focus:border-accent/60 focus:ring-4 sm:text-sm"
+          className="min-h-11 w-full rounded-lg border border-line/90 bg-background/78 px-3 text-base outline-none ring-accent/20 transition-colors duration-150 focus:border-accent/60 focus:ring-4 sm:text-sm"
           id="email"
           name="email"
           placeholderKey="register.email"
@@ -64,7 +64,7 @@ export default async function RegisterPage({
         </label>
         <TranslatedInput
           autoComplete="name"
-          className="min-h-11 w-full rounded-lg border border-line/90 bg-background/78 px-3 text-base outline-none ring-accent/20 transition-all duration-200 focus:border-accent/60 focus:ring-4 sm:text-sm"
+          className="min-h-11 w-full rounded-lg border border-line/90 bg-background/78 px-3 text-base outline-none ring-accent/20 transition-colors duration-150 focus:border-accent/60 focus:ring-4 sm:text-sm"
           id="displayName"
           name="displayName"
           placeholderKey="register.displayName"
@@ -76,7 +76,7 @@ export default async function RegisterPage({
         </label>
         <TranslatedInput
           autoComplete="new-password"
-          className="min-h-11 w-full rounded-lg border border-line/90 bg-background/78 px-3 text-base outline-none ring-accent/20 transition-all duration-200 focus:border-accent/60 focus:ring-4 sm:text-sm"
+          className="min-h-11 w-full rounded-lg border border-line/90 bg-background/78 px-3 text-base outline-none ring-accent/20 transition-colors duration-150 focus:border-accent/60 focus:ring-4 sm:text-sm"
           id="password"
           minLength={8}
           name="password"
@@ -90,7 +90,7 @@ export default async function RegisterPage({
         </label>
         <TranslatedInput
           autoComplete="new-password"
-          className="min-h-11 w-full rounded-lg border border-line/90 bg-background/78 px-3 text-base outline-none ring-accent/20 transition-all duration-200 focus:border-accent/60 focus:ring-4 sm:text-sm"
+          className="min-h-11 w-full rounded-lg border border-line/90 bg-background/78 px-3 text-base outline-none ring-accent/20 transition-colors duration-150 focus:border-accent/60 focus:ring-4 sm:text-sm"
           id="confirmPassword"
           minLength={8}
           name="confirmPassword"

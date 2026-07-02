@@ -91,7 +91,6 @@ export function CommandPalette() {
                   <Icon className="h-4 w-4" />
                   {t(item.labelKey)}
                 </span>
-                <span className="text-xs">{item.phase}</span>
               </Link>
             );
           })}

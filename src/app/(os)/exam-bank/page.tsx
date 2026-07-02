@@ -112,7 +112,6 @@ export default async function ExamBankPage({
         }
         badge={<Badge>{questions.length} 题</Badge>}
         descriptionKey="exam.bankDescription"
-        eyebrow="Exam Review"
         titleKey="exam.bankTitle"
       />
 

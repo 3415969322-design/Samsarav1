@@ -216,7 +216,6 @@ export default async function DiaryPage({
           </div>
         }
         descriptionKey="diary.description"
-        eyebrow="v1.0"
         titleKey="diary.title"
       />
 
@@ -369,7 +368,7 @@ export default async function DiaryPage({
                       {diary.mood ? <TagChip color="#8b5cf6" name={diary.mood} /> : null}
                       {diary.weather ? <TagChip color="#0ea5e9" name={diary.weather} /> : null}
                       {files.length > 0 ? (
-                        <span className="rounded-full border border-line px-2 py-0.5 text-[10px]">
+                        <span className="rounded-full border border-line px-2 py-0.5 text-xs">
                           {files.length} files
                         </span>
                       ) : null}

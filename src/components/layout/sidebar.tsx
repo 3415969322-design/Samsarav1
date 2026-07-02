@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { navItems } from "@/components/layout/nav-items";
+import { isActiveNavItem, navItems } from "@/components/layout/nav-items";
 import { useLanguage } from "@/components/i18n/language-provider";
 import { cn } from "@/lib/utils";
 
@@ -21,23 +21,20 @@ export function Sidebar() {
       <nav className="space-y-1.5 p-4">
         {navItems.map((item) => {
           const Icon = item.icon;
-          const active = pathname === item.href;
+          const active = isActiveNavItem(pathname, item.href);
 
           return (
             <Link
               className={cn(
-                "flex min-h-11 items-center justify-between rounded-lg px-3 py-2 text-sm text-muted transition-all duration-200 hover:-translate-y-0.5 hover:bg-background/82 hover:text-foreground hover:shadow-sm active:translate-y-0 active:scale-[0.99]",
+                "flex min-h-11 items-center rounded-lg px-3 py-2 text-sm text-muted transition-colors duration-150 hover:bg-background/82 hover:text-foreground",
                 active && "bg-background/90 text-foreground shadow-sm ring-1 ring-line/70",
               )}
               href={item.href}
               key={item.href}
             >
               <span className="flex items-center gap-3">
-                <Icon className="h-4 w-4" />
+                <Icon className="h-[18px] w-[18px]" strokeWidth={active ? 2.2 : 1.8} />
                 {t(item.labelKey)}
-              </span>
-              <span className="text-[10px] uppercase tracking-wide text-muted">
-                {item.phase}
               </span>
             </Link>
           );

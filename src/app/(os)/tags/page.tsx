@@ -22,11 +22,8 @@ export default async function TagsPage() {
 
   return (
     <div className="space-y-6">
-      <section className="rounded-lg border border-line bg-panel p-6">
-        <p className="text-sm font-medium uppercase tracking-wide text-muted">
-          v1.0
-        </p>
-        <h1 className="mt-2 text-3xl font-semibold">
+      <section className="rounded-xl border border-line bg-panel p-6 shadow-sm">
+        <h1 className="text-3xl font-semibold">
           <T k="tags.title" />
         </h1>
         <p className="mt-2 max-w-2xl text-sm leading-6 text-muted">
@@ -34,16 +31,16 @@ export default async function TagsPage() {
         </p>
       </section>
 
-      <section className="rounded-lg border border-line bg-panel p-4">
+      <section className="rounded-xl border border-line bg-panel p-4 shadow-sm">
         <form action={createTagAction} className="grid gap-3 md:grid-cols-[1fr_10rem_6rem_auto]">
           <TranslatedInput
-            className="h-10 rounded-md border border-line bg-background px-3 text-sm"
+            className="min-h-11 rounded-md border border-line bg-background px-3 text-base sm:text-sm"
             name="name"
             placeholderKey="tags.name"
             required
           />
           <TranslatedSelect
-            className="h-10 rounded-md border border-line bg-background px-3 text-sm"
+            className="min-h-11 rounded-md border border-line bg-background px-3 text-base sm:text-sm"
             defaultValue="GLOBAL"
             name="type"
             options={[
@@ -55,7 +52,7 @@ export default async function TagsPage() {
             ]}
           />
           <input
-            className="h-10 rounded-md border border-line bg-background px-2"
+            className="min-h-11 rounded-md border border-line bg-background px-2"
             defaultValue="#2563eb"
             name="color"
             type="color"

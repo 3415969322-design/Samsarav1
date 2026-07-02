@@ -82,7 +82,6 @@ export default async function FilesPage({
           </Link>
         }
         descriptionKey="files.description"
-        eyebrow="v1.0"
         titleKey="files.title"
       />
 
