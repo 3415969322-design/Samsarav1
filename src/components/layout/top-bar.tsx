@@ -16,6 +16,7 @@ export function TopBar({ session }: { session: SessionPayload }) {
   return (
     <header className="sticky top-0 z-30 flex h-14 items-center justify-between border-b border-line/80 bg-panel/88 px-3 shadow-sm shadow-black/[0.03] backdrop-blur-xl sm:h-16 sm:px-6">
       <div className="flex min-w-0 flex-1 items-center gap-3">
+        <SamsaraLaceAnchor className="sm:hidden" variant="mobile-topbar" />
         <SamsaraLaceAnchor className="hidden xl:block" variant="topbar" />
         <button
           className="flex min-h-11 min-w-0 flex-1 items-center gap-2 rounded-lg border border-line/85 bg-background/72 px-3 text-left text-sm text-muted transition-colors duration-150 hover:border-accent/45 hover:bg-background hover:text-foreground sm:max-w-md"

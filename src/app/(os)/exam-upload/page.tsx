@@ -55,22 +55,22 @@ export default async function ExamUploadPage({
           </p>
         </CardHeader>
         <CardContent>
-          <form action={uploadExamSourceAction} className="grid gap-4">
+          <form action={uploadExamSourceAction} className="grid min-w-0 gap-4">
             <input
-              className="min-h-11 rounded-lg border border-line bg-background px-3 text-base outline-none ring-accent/20 focus:ring-4 sm:text-sm"
+              className="min-h-11 w-full min-w-0 rounded-lg border border-line bg-background px-3 text-base outline-none ring-accent/20 focus:ring-4 sm:text-sm"
               name="title"
               placeholder="资料标题（可选）"
             />
             <input
               accept=".pdf,.docx,.txt,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document,text/plain"
-              className="min-h-11 rounded-lg border border-line bg-background px-3 py-2 text-base file:mr-3 file:rounded-md file:border-0 file:bg-accent file:px-3 file:py-2 file:text-sm file:font-medium file:text-accent-foreground sm:text-sm"
+              className="block min-h-11 w-full min-w-0 max-w-full overflow-hidden rounded-lg border border-line bg-background px-2 py-2 text-base file:mr-2 file:max-w-[8.5rem] file:truncate file:rounded-md file:border-0 file:bg-accent file:px-3 file:py-2 file:text-sm file:font-medium file:text-accent-foreground sm:px-3 sm:text-sm sm:file:mr-3 sm:file:max-w-none"
               name="file"
               required
               type="file"
             />
             {errorMessage ? <p className="text-sm text-danger">{errorMessage}</p> : null}
             <div>
-              <Button type="submit" variant="primary">
+              <Button className="w-full sm:w-auto" type="submit" variant="primary">
                 上传并生成题库
               </Button>
             </div>

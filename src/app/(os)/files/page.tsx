@@ -86,24 +86,24 @@ export default async function FilesPage({
       />
 
       <SectionCard>
-        <form action={uploadFileAction} className="grid gap-3" encType="multipart/form-data">
-          <div className="grid gap-3 md:grid-cols-[1fr_1fr]">
+        <form action={uploadFileAction} className="grid min-w-0 gap-3" encType="multipart/form-data">
+          <div className="grid min-w-0 gap-3 md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
             <input
-              className="min-h-11 rounded-lg border border-line bg-background px-3 py-2 text-base sm:text-sm"
+              className="block min-h-11 w-full min-w-0 max-w-full overflow-hidden rounded-lg border border-line bg-background px-2 py-2 text-base file:mr-2 file:max-w-[8.5rem] file:truncate file:rounded-md file:border-0 file:bg-accent file:px-3 file:py-2 file:text-sm file:font-medium file:text-accent-foreground sm:px-3 sm:text-sm sm:file:mr-3 sm:file:max-w-none"
               name="file"
               required
               type="file"
               accept={supportedExtensions.join(",")}
             />
             <TranslatedInput
-              className="min-h-11 rounded-lg border border-line bg-background px-3 text-base sm:text-sm"
+              className="min-h-11 w-full min-w-0 rounded-lg border border-line bg-background px-3 text-base sm:text-sm"
               name="filename"
               placeholderKey="files.optionalName"
             />
           </div>
           <TagCheckboxes tags={tagOptions} />
           <div>
-            <Button type="submit" variant="primary">
+            <Button className="w-full sm:w-auto" type="submit" variant="primary">
               <T k="files.upload" />
             </Button>
           </div>

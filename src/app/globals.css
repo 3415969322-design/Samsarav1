@@ -221,6 +221,13 @@ button {
   width: 270px;
 }
 
+.samsara-lace-anchor-mobile-topbar {
+  border-radius: 0.25rem;
+  flex: 0 0 86px;
+  height: 36px;
+  width: 86px;
+}
+
 .samsara-lace-anchor-mobile-auth {
   height: 5rem;
   width: min(13rem, 64vw);
