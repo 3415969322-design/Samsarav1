@@ -7,6 +7,7 @@ import type { SessionPayload } from "@/lib/auth/session";
 import { useTheme } from "@/components/theme/theme-provider";
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/components/i18n/language-provider";
+import { SamsaraLaceAnchor } from "@/components/ui/samsara-lace-anchor";
 
 export function TopBar({ session }: { session: SessionPayload }) {
   const { theme, toggleTheme } = useTheme();
@@ -14,17 +15,20 @@ export function TopBar({ session }: { session: SessionPayload }) {
 
   return (
     <header className="sticky top-0 z-30 flex h-14 items-center justify-between border-b border-line/80 bg-panel/88 px-3 shadow-sm shadow-black/[0.03] backdrop-blur-xl sm:h-16 sm:px-6">
-      <button
-        className="flex min-h-11 min-w-0 flex-1 items-center gap-2 rounded-lg border border-line/85 bg-background/72 px-3 text-left text-sm text-muted transition-all duration-200 hover:-translate-y-0.5 hover:border-accent/45 hover:text-foreground hover:shadow-sm active:translate-y-0 active:scale-[0.99] sm:max-w-md"
-        onClick={() => window.dispatchEvent(new Event("samsara:open-command-palette"))}
-        type="button"
-      >
-        <Search className="h-4 w-4" />
-        <span className="truncate">{t("topbar.search")}</span>
-        <span className="ml-auto hidden rounded border border-line px-1.5 py-0.5 text-xs sm:inline">
-          ⌘K
-        </span>
-      </button>
+      <div className="flex min-w-0 flex-1 items-center gap-3">
+        <SamsaraLaceAnchor className="hidden xl:block" variant="topbar" />
+        <button
+          className="flex min-h-11 min-w-0 flex-1 items-center gap-2 rounded-lg border border-line/85 bg-background/72 px-3 text-left text-sm text-muted transition-all duration-200 hover:-translate-y-0.5 hover:border-accent/45 hover:text-foreground hover:shadow-sm active:translate-y-0 active:scale-[0.99] sm:max-w-md"
+          onClick={() => window.dispatchEvent(new Event("samsara:open-command-palette"))}
+          type="button"
+        >
+          <Search className="h-4 w-4" />
+          <span className="truncate">{t("topbar.search")}</span>
+          <span className="ml-auto hidden rounded border border-line px-1.5 py-0.5 text-xs sm:inline">
+            ⌘K
+          </span>
+        </button>
+      </div>
 
       <div className="ml-2 flex items-center gap-1.5 sm:ml-3 sm:gap-2">
         <Button
